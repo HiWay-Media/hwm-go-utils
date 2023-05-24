@@ -1,4 +1,4 @@
-module github.com/HiWay-Media/hwm-util/redis
+module github.com/HiWay-Media/hwm-utils/redis
 
 go 1.18
 
