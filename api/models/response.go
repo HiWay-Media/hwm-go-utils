@@ -28,6 +28,10 @@ func ApiDefaultResponse(data interface{}) *ApiMessage {
 	return &ApiMessage{Response: "OK", Data: data}
 }
 
+func ApiDefault() *ApiMessage {
+	return &ApiMessage{Response: "OK"}
+}
+
 func ApiDefaultMsgOnly(message string) *ApiMessage {
 	return &ApiMessage{Response: "OK", Message: message}
 }
