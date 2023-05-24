@@ -1,4 +1,4 @@
-package utils
+package models
 
 type ErrorMess struct {
 	Severity string `json:"severity,omitempty"`
