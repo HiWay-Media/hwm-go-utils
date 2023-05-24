@@ -1,4 +1,4 @@
-module github.com/HiWay-Media/hwm-utils
+module github.com/HiWay-Media/hwm-go-utils
 
 go 1.18
 
