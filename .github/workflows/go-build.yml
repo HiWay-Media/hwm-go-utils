@@ -23,4 +23,7 @@ jobs:
     - name: Build API
       run: cd api && go build -v ./...
     #
+    - name: Build Redis
+      run: cd redis && go build -v ./...
+    #
 #
