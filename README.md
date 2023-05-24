@@ -14,3 +14,7 @@ hwm-utils is a collection of utility functions and packages developed by HiWay M
 ## Installation
 
 To install the hwm-utils package, you can use the `go get` command:
+
+```shell
+go get github.com/HiWay-Media/hwm-go-utils
+```
