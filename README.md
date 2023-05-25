@@ -1,4 +1,5 @@
 # HWM Utils 
+[![Go build](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml)
 
 
 hwm-utils is a collection of utility functions and packages developed by HiWay Media. These utilities aim to provide common functionalities and tools that can be used across various projects.
@@ -13,3 +14,7 @@ hwm-utils is a collection of utility functions and packages developed by HiWay M
 ## Installation
 
 To install the hwm-utils package, you can use the `go get` command:
+
+```shell
+go get github.com/HiWay-Media/hwm-go-utils
+```

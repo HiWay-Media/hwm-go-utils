@@ -20,10 +20,7 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
     #
-    - name: Build API
-      run: cd api && go build -v ./...
-    #
-    - name: Build Redis
-      run: cd redis && go build -v ./...
+    - name: Build HWM Go Utils
+      run: go build -v ./...
     #
 #
