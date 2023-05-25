@@ -14,19 +14,18 @@ type IService interface {
 }
 
 type service struct {
-	client   *resty.Client
-	logger   *zap.SugaredLogger
-	endpoint string
+	client *resty.Client
+	logger *zap.SugaredLogger
 }
 
-func NewService(logger *zap.SugaredLogger, endpoint string) IService {
-	return &service{logger: logger, client: resty.New(), endpoint: endpoint}
+func NewService(logger *zap.SugaredLogger, baseURL string) IService {
+	return &service{logger: logger, client: resty.New().SetBaseURL(baseURL)}
 }
 
 func (s *service) send(method string, route string, params map[string]string, body any) (*resty.Response, error) {
 	request := s.client.R()
 	request.Method = method
-	request.URL = s.endpoint + route
+	request.URL = route
 
 	for k, v := range params {
 		request.QueryParam.Add(k, v)
