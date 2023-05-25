@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
-	"path"
 )
 
 type IService interface {
@@ -27,7 +26,7 @@ func NewService(logger *zap.SugaredLogger, endpoint string) IService {
 func (s *service) send(method string, route string, params map[string]string, body any) (*resty.Response, error) {
 	request := s.client.R()
 	request.Method = method
-	request.URL = path.Join(s.endpoint, route)
+	request.URL = s.endpoint + route
 
 	for k, v := range params {
 		request.QueryParam.Add(k, v)
