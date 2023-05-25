@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/HiWay-Media/hwm-go-utils/api/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -20,22 +21,21 @@ func JwtProtected() fiber.Handler {
 		if len(authHeader) != 2 {
 			log.Println("Malformed token on request: ", c.Request().URI())
 			//utils.Bug("Malformed token on request: %s", c.Request().URI())
-			return c.Status(http.StatusUnauthorized).JSON(ApiDefaultError("malformed token"))
+			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("malformed token"))
 		} else {
-			tokenString := authHeader[1]
+			//tokenString := authHeader[1]
+			// need to fix this metod
 			/*isOk, token, err := verifyJWT_RSA(tokenString, SECRETRSAPUBLICKEY)
 			if err != nil || !isOk {
-				//logrus.Errorf("error during verify jwt, err: %s", err.Error())
-				//utils.Bug("error during verify jwt, err ", err.Error(), tokenString)
-				return c.Status(http.StatusUnauthorized).JSON(ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
-			}*/
+				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
+			}
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				c.Context().SetUserValue("tokenClaims", claims)
 				return c.Next()
 			} else {
-				return c.Status(http.StatusUnauthorized).JSON(ApiDefaultError("unhautorized"))
-			}
-
+				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
+			}*/
+			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
 		}
 	}
 }
@@ -110,7 +110,7 @@ func RoleCheck(rolesToCheck []string) fiber.Handler {
 			} // if all requested role missing, error and return
 			if missingCounter == len(rolesToCheck) {
 				//logrus.Errorf("Missing roles in claims: %s", role)
-				return c.Status(http.StatusUnauthorized).JSON(&ApiError{Message: fmt.Sprintf("Missing role %s", role)})
+				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("Missing role %s", role)))
 			}
 		}
 		return c.Next()
