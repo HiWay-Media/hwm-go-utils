@@ -7,6 +7,7 @@ import (
 )
 
 type IService interface {
+	SetAuthorization(token string)
 	Get(route string, params map[string]string) (*resty.Response, error)
 	Delete(route string, params map[string]string) (*resty.Response, error)
 	Put(route string, body any, params map[string]string) (*resty.Response, error)
@@ -16,6 +17,7 @@ type IService interface {
 type service struct {
 	client *resty.Client
 	logger *zap.SugaredLogger
+	token  string
 }
 
 func NewService(logger *zap.SugaredLogger, baseURL string) IService {
@@ -29,6 +31,10 @@ func (s *service) send(method string, route string, params map[string]string, bo
 
 	for k, v := range params {
 		request.QueryParam.Add(k, v)
+	}
+
+	if s.token != "" {
+		request.SetAuthToken(s.token)
 	}
 
 	if body != nil {
@@ -53,6 +59,10 @@ func (s *service) send(method string, route string, params map[string]string, bo
 	s.logger.Debugf("response: %s", string(response.Body()))
 
 	return response, nil
+}
+
+func (s *service) SetAuthorization(token string) {
+	s.token = token
 }
 
 func (s *service) Get(route string, params map[string]string) (*resty.Response, error) {
