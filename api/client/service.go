@@ -64,7 +64,7 @@ func (s *service) Get(route string, params map[string]string) (*resty.Response, 
 }
 
 func (s *service) Delete(route string, params map[string]string) (*resty.Response, error) {
-	return s.send("POST", route, params, nil)
+	return s.send("DELETE", route, params, nil)
 }
 
 func (s *service) Put(route string, body any, params map[string]string) (*resty.Response, error) {
