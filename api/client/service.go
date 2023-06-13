@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/json"
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
 )
@@ -38,13 +37,8 @@ func (s *service) send(method string, route string, params map[string]string, bo
 	}
 
 	if body != nil {
-		j, err := json.Marshal(body)
-		if err != nil {
-			s.logger.Errorf("failed to serialize body")
-			return nil, err
-		}
-		request.Body = j
-		request.Header.Set("content-type", "application/json")
+		request.SetHeader("Content-Type", "application/json")
+		request.SetBody(body)
 	}
 
 	response, err := request.Send()
