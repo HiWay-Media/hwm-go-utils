@@ -18,3 +18,22 @@ To install the hwm-utils package, you can use the `go get` command:
 ```shell
 go get github.com/HiWay-Media/hwm-go-utils
 ```
+## Contributing
+Contributions to this repository are welcome. If you would like to contribute, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with clear and concise messages.
+4. Push your changes to your forked repository.
+O5. pen a pull request, describing your changes and the problem they solve.
+Please ensure that your code adheres to the existing code style and that any new features or changes are appropriately documented.
+
+## License
+This repository is licensed under the MIT License. Please refer to the LICENSE file for more information.
+
+## Acknowledgments
+- This repository was developed by HiWay Media.
+- Special thanks to the contributors who have helped make this project possible.
+If you have any questions, concerns, or issues related to this repository, please open an issue or contact the maintainers directly.
+
+Happy coding with hwm-go-utils!
