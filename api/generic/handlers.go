@@ -80,7 +80,7 @@ func (s *Handler[TK, T]) Get(c *fiber.Ctx) error {
 		anyId = id
 	}
 
-	r, err := s.Service.Get[TK, T](anyId)
+	r, err := s.Service.Get(anyId)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -104,7 +104,7 @@ func (s *Handler[TK, T]) Delete(c *fiber.Ctx) error {
 		anyId = id
 	}
 
-	err = s.Service.Delete[TK, T](anyId)
+	err = s.Service.Delete(anyId)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
