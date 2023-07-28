@@ -28,12 +28,12 @@ func NewHandler[T any](service IService[T], logger *zap.SugaredLogger) IHandler[
 
 func (s *Handler[T]) List(c *fiber.Ctx) error {
 	start, err := strconv.Atoi(c.Query("start", "0"))
-	if err == nil {
+	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(models.ApiDefaultError("start invalid"))
 	}
 
 	limit, err := strconv.Atoi(c.Query("limit", "0"))
-	if err == nil {
+	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(models.ApiDefaultError("limit invalid"))
 	}
 
