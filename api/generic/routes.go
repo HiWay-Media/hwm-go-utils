@@ -6,15 +6,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func SetEndpoints[TK any, T any](router fiber.Router, database *gorm.DB, logger *zap.SugaredLogger) (IStore[TK, T], IService[TK, T], IHandler[TK, T]) {
-	store := NewStore[TK, T](database)
-	service := NewService[TK, T](store, logger)
-	handler := NewHandler[TK, T](service, logger)
+func SetEndpoints[T any](router fiber.Router, database *gorm.DB, logger *zap.SugaredLogger) (IStore[T], IService[T], IHandler[T]) {
+	store := NewStore[T](database)
+	service := NewService[T](store, logger)
+	handler := NewHandler[T](service, logger)
 	setRoutes(router, handler)
 	return store, service, handler
 }
 
-func setRoutes[TK any, T any](router fiber.Router, handler IHandler[TK, T]) {
+func setRoutes[T any](router fiber.Router, handler IHandler[T]) {
 	router.Get("/:id", handler.Get)
 	router.Get("/", handler.List)
 	router.Post("/", handler.Create)

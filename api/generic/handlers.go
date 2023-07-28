@@ -10,23 +10,23 @@ import (
 	"strconv"
 )
 
-type IHandler[TK any, T any] interface {
+type IHandler[T any] interface {
 	Get(c *fiber.Ctx) error
 	Create(c *fiber.Ctx) error
 	Delete(c *fiber.Ctx) error
 	List(c *fiber.Ctx) error
 }
 
-type Handler[TK any, T any] struct {
-	Service IService[TK, T]
+type Handler[T any] struct {
+	Service IService[T]
 	Logger  *zap.SugaredLogger
 }
 
-func NewHandler[TK any, T any](service IService[TK, T], logger *zap.SugaredLogger) IHandler[TK, T] {
-	return &Handler[TK, T]{Service: service, Logger: logger}
+func NewHandler[T any](service IService[T], logger *zap.SugaredLogger) IHandler[T] {
+	return &Handler[T]{Service: service, Logger: logger}
 }
 
-func (s *Handler[TK, T]) List(c *fiber.Ctx) error {
+func (s *Handler[T]) List(c *fiber.Ctx) error {
 	start, err := strconv.Atoi(c.Query("start", "0"))
 	if err == nil {
 		return c.Status(http.StatusBadRequest).JSON(models.ApiDefaultError("start invalid"))
@@ -49,7 +49,7 @@ func (s *Handler[TK, T]) List(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(models.ApiDefaultResponse(r))
 }
 
-func (s *Handler[TK, T]) Create(c *fiber.Ctx) error {
+func (s *Handler[T]) Create(c *fiber.Ctx) error {
 	var requestBody T
 
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -68,7 +68,7 @@ func (s *Handler[TK, T]) Create(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(models.ApiDefaultResponse(requestBody))
 }
 
-func (s *Handler[TK, T]) Get(c *fiber.Ctx) error {
+func (s *Handler[T]) Get(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
 		return c.Status(http.StatusBadRequest).JSON(models.ApiDefaultError("id invalid"))
@@ -92,7 +92,7 @@ func (s *Handler[TK, T]) Get(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(models.ApiDefaultResponse(r))
 }
 
-func (s *Handler[TK, T]) Delete(c *fiber.Ctx) error {
+func (s *Handler[T]) Delete(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
 		return c.Status(http.StatusBadRequest).JSON(models.ApiDefaultError("id invalid"))
