@@ -18,13 +18,12 @@ type IHandler[TK any, T any] interface {
 }
 
 type Handler[TK any, T any] struct {
-	Service       IService[TK, T]
-	Configuration Configuration
-	Logger        *zap.SugaredLogger
+	Service IService[TK, T]
+	Logger  *zap.SugaredLogger
 }
 
-func NewHandler[TK any, T any](service IService[TK, T], logger *zap.SugaredLogger, configuration Configuration) IHandler[TK, T] {
-	return &Handler[TK, T]{Logger: logger, Configuration: configuration, Service: service}
+func NewHandler[TK any, T any](service IService[TK, T], logger *zap.SugaredLogger) IHandler[TK, T] {
+	return &Handler[TK, T]{Service: service, Logger: logger}
 }
 
 func (s *Handler[TK, T]) List(c *fiber.Ctx) error {

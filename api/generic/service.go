@@ -12,13 +12,12 @@ type IService[TK any, T any] interface {
 }
 
 type Service[TK any, T any] struct {
-	Store         IStore[TK, T]
-	Logger        *zap.SugaredLogger
-	Configuration Configuration
+	Store  IStore[TK, T]
+	Logger *zap.SugaredLogger
 }
 
-func NewService[TK any, T any](store IStore[TK, T], logger *zap.SugaredLogger, configuration Configuration) IService[TK, T] {
-	return &Service[TK, T]{Logger: logger, Configuration: configuration, Store: store}
+func NewService[TK any, T any](store IStore[TK, T], logger *zap.SugaredLogger) IService[TK, T] {
+	return &Service[TK, T]{Logger: logger, Store: store}
 }
 
 func (s *Service[TK, T]) List(start, limit int) ([]T, error) {
