@@ -4,7 +4,8 @@ go 1.18
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
-	go.uber.org/zap v1.24.0
+	go.uber.org/zap v1.25.0
+	gopkg.in/validator.v2 v2.0.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.1
 )
@@ -28,7 +29,6 @@ require (
 	github.com/valyala/fasthttp v1.47.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
-	gopkg.in/validator.v2 v2.0.1 // indirect
 )
 
 require (
@@ -37,7 +37,6 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gofiber/fiber/v2 v2.46.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 )
