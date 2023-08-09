@@ -2,6 +2,8 @@ github.com/Paxx-RnD/go-helper v1.0.56 h1:n/3xuUNDJQ9NyaVaMHFcPv+628nF/8HemntozgN
 github.com/Paxx-RnD/go-helper v1.0.56/go.mod h1:Ng47qyxnTvYB/dJMOa748CXzIgjOd3HLi+y5bqa8li8=
 github.com/Paxx-RnD/go-helper v1.0.58 h1:Geo7HRGZlCYzMxpYExo86r6xLMGh/lV+XJvWbWlbSZk=
 github.com/Paxx-RnD/go-helper v1.0.58/go.mod h1:Ng47qyxnTvYB/dJMOa748CXzIgjOd3HLi+y5bqa8li8=
+github.com/Paxx-RnD/go-helper v1.0.59 h1:PFyLGnhWf8arNXUG6/DVpbh5Qf14T9hJ5c55gR/64Co=
+github.com/Paxx-RnD/go-helper v1.0.59/go.mod h1:Ng47qyxnTvYB/dJMOa748CXzIgjOd3HLi+y5bqa8li8=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
