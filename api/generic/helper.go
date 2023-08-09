@@ -5,12 +5,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func FromQuery[T any](ctx *fiber.Ctx, param string, out *T) error {
+func FromQuery[T any](ctx *fiber.Ctx, param string) (*T, error) {
 	q := ctx.Query(param, "")
-	return generic_helper.ConvertFromString[T](q, out)
+	return generic_helper.ConvertFromString[T](q)
 }
 
-func FromParam[T any](ctx *fiber.Ctx, param string, out *T) error {
+func FromParam[T any](ctx *fiber.Ctx, param string) (*T, error) {
 	p := ctx.Params(param, "")
-	return generic_helper.ConvertFromString[T](p, out)
+	return generic_helper.ConvertFromString[T](p)
 }
