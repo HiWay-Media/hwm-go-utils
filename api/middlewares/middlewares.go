@@ -15,7 +15,7 @@ import (
 //var SECRETRSAPUBLICKEY = []byte(config.CONFIGURATION.KeycloakPublicKey)
 
 // JwtProtected wrap http handler functions for jwt verification
-func JwtProtected() fiber.Handler {
+func JwtProtected(publicKey string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
 		if len(authHeader) != 2 {
@@ -23,9 +23,9 @@ func JwtProtected() fiber.Handler {
 			//utils.Bug("Malformed token on request: %s", c.Request().URI())
 			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("malformed token"))
 		} else {
-			//tokenString := authHeader[1]
+			tokenString := authHeader[1]
 			// need to fix this metod
-			/*isOk, token, err := verifyJWT_RSA(tokenString, SECRETRSAPUBLICKEY)
+			isOk, token, err := verifyJWT_RSA(tokenString, publicKey)
 			if err != nil || !isOk {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
 			}
@@ -33,8 +33,8 @@ func JwtProtected() fiber.Handler {
 				c.Context().SetUserValue("tokenClaims", claims)
 				return c.Next()
 			} else {
-				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
-			}*/
+				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("Unhautorized, token is not valid"))
+			}
 			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
 		}
 	}
