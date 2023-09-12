@@ -51,7 +51,7 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 	if block == nil || block.Type != "RSA PUBLIC KEY" {
 		fmt.Println("Failed to decode PEM block containing public key")
 		//os.Exit(1)
-		return nil,  &jwt.Token{}, errors.New("Failed to decode PEM block containing public key"),
+		return nil,  &jwt.Token{}, errors.New("Failed to decode PEM block containing public key")
 	}
 	//
 	var parsedToken *jwt.Token
