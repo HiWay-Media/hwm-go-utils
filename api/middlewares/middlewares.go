@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"encoding/pem"
 
 	"github.com/HiWay-Media/hwm-go-utils/api/models"
 	"github.com/gofiber/fiber/v2"
