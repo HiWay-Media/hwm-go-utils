@@ -67,7 +67,7 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 	})
 
 	if err != nil {
-		return false, &jwt.Token{}, fmt.Errorf("AuthKeycloak parse", err.Error())
+		return false, &jwt.Token{}, err
 	}
 
 	if !state.Valid {
