@@ -17,6 +17,7 @@ import (
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
 	pKey := "-----BEGIN PUBLIC KEY-----\n"+publicKey+"\n-----END PUBLIC KEY-----\n"
+	fmt.Println(pKey)
 	//
 	return func(c *fiber.Ctx) error {
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
@@ -60,6 +61,7 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 		// verify
 		key, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
 		if err != nil {
+			fmt.Println(err.Error())
 			return nil, fmt.Errorf("AuthKeycloak verify", err.Error())
 		}
 
