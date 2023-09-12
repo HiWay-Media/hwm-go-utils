@@ -60,14 +60,14 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 		// verify
 		key, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
 		if err != nil {
-			return nil, fmt.Errorf("AuthKeycloak", err.Error())
+			return nil, fmt.Errorf("AuthKeycloak verify", err.Error())
 		}
 
 		return key, nil
 	})
 
 	if err != nil {
-		return false, &jwt.Token{}, fmt.Errorf("AuthKeycloak", err.Error())
+		return false, &jwt.Token{}, fmt.Errorf("AuthKeycloak parse", err.Error())
 	}
 
 	if !state.Valid {
