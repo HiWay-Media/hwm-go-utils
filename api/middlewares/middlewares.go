@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"encoding/base64"
 
 	"github.com/HiWay-Media/hwm-go-utils/api/models"
 	"github.com/gofiber/fiber/v2"
@@ -17,8 +18,14 @@ import (
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
 	fmt.Println(publicKey)
-	pKey := "-----BEGIN PUBLIC KEY-----\n"+publicKey+"\n-----END PUBLIC KEY-----\n"
-	fmt.Println(pKey)
+	//pKey := "-----BEGIN PUBLIC KEY-----\n"+publicKey+"\n-----END PUBLIC KEY-----\n"
+	//fmt.Println(pKey)
+	// Decode the base64 content
+	decodedBytes, err := base64.StdEncoding.DecodeString(publicKey)
+	if err != nil {
+		fmt.Println("Failed to decode base64 content:", err)
+		return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("publicKey is compulsory"))
+	}
 	//
 	return func(c *fiber.Ctx) error {
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
@@ -29,7 +36,7 @@ func JwtProtected(publicKey string) fiber.Handler {
 		} else {
 			tokenString := authHeader[1]
 			// need to fix this metod
-			isOk, token, err := verifyJWT_RSA(tokenString, []byte(pKey))
+			isOk, token, err := verifyJWT_RSA(tokenString, []byte(decodedBytes))
 			if err != nil || !isOk {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
 			}
