@@ -16,7 +16,7 @@ import (
 
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
-	fmt.Println(publicKey)
+	//fmt.Println(publicKey)
 	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"\n-----END PUBLIC KEY-----\n"
 	fmt.Println(pKey)
 	//
@@ -29,7 +29,7 @@ func JwtProtected(publicKey string) fiber.Handler {
 		} else {
 			tokenString := authHeader[1]
 			// need to fix this metod
-			isOk, token, err := verifyJWT_RSA(tokenString, []byte(publicKey))
+			isOk, token, err := verifyJWT_RSA(tokenString, []byte(pKey))
 			if err != nil || !isOk {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
 			}
