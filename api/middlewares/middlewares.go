@@ -24,7 +24,7 @@ func JwtProtected(publicKey string) fiber.Handler {
 	decodedBytes, err := base64.StdEncoding.DecodeString(publicKey)
 	if err != nil {
 		fmt.Println("Failed to decode base64 content:", err)
-		return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("publicKey is compulsory"))
+		return fmt.Errorf("publicKey is compulsory")
 	}
 	//
 	return func(c *fiber.Ctx) error {
