@@ -20,14 +20,14 @@ func JwtProtected(publicKey string) fiber.Handler {
 	fmt.Println(publicKey)
 	//pKey := "-----BEGIN PUBLIC KEY-----\n"+publicKey+"\n-----END PUBLIC KEY-----\n"
 	//fmt.Println(pKey)
-	// Decode the base64 content
-	decodedBytes, err := base64.StdEncoding.DecodeString(publicKey)
-	if err != nil {
-		fmt.Println("Failed to decode base64 content:", err)
-		return fmt.Errorf("publicKey is compulsory")
-	}
 	//
 	return func(c *fiber.Ctx) error {
+		// Decode the base64 content
+		decodedBytes, err := base64.StdEncoding.DecodeString(publicKey)
+		if err != nil {
+			fmt.Println("Failed to decode base64 content:", err)
+			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError( "publicKey is compulsory, "+err.Error() ))
+		}
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
 		if len(authHeader) != 2 {
 			log.Println("Malformed token on request: ", c.Request().URI())
