@@ -18,16 +18,10 @@ import (
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
 	fmt.Println(publicKey)
-	//pKey := "-----BEGIN PUBLIC KEY-----\n"+publicKey+"\n-----END PUBLIC KEY-----\n"
-	//fmt.Println(pKey)
+	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"-----END PUBLIC KEY-----\n"
+	fmt.Println(pKey)
 	//
 	return func(c *fiber.Ctx) error {
-		// Decode the base64 content
-		decodedBytes, err := base64.StdEncoding.DecodeString(publicKey)
-		if err != nil {
-			fmt.Println("Failed to decode base64 content:", err)
-			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError( "publicKey is compulsory, "+err.Error() ))
-		}
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
 		if len(authHeader) != 2 {
 			log.Println("Malformed token on request: ", c.Request().URI())
@@ -36,7 +30,7 @@ func JwtProtected(publicKey string) fiber.Handler {
 		} else {
 			tokenString := authHeader[1]
 			// need to fix this metod
-			isOk, token, err := verifyJWT_RSA(tokenString, []byte(decodedBytes))
+			isOk, token, err := verifyJWT_RSA(tokenString, []byte(publicKey))
 			if err != nil || !isOk {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
 			}
@@ -50,6 +44,18 @@ func JwtProtected(publicKey string) fiber.Handler {
 		}
 	}
 }
+
+func insertNewlines(input string, every int) string {
+	var result string
+	for i, char := range input {
+		result += string(char)
+		if (i+1)%every == 0 {
+			result += "\n"
+		}
+	}
+	return result
+}
+
 
 // Verify a JWT token using an RSA public key
 func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
