@@ -17,7 +17,7 @@ import (
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
 	fmt.Println(publicKey)
-	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"-----END PUBLIC KEY-----\n"
+	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"\n-----END PUBLIC KEY-----\n"
 	fmt.Println(pKey)
 	//
 	return func(c *fiber.Ctx) error {
