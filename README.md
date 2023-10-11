@@ -1,6 +1,7 @@
 # HWM Utils 
 [![Go build](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml)
-
+![GitHub](https://img.shields.io/github/license/HiWay-Media/hwm-go-utils)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/HiWay-Media/hwm-go-utils)
 
 hwm-utils is a collection of utility functions and packages developed by HiWay Media. These utilities aim to provide common functionalities and tools that can be used across various projects.
 
