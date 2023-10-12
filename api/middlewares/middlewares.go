@@ -15,7 +15,11 @@ import (
 //var SECRETRSAPUBLICKEY = []byte(config.CONFIGURATION.KeycloakPublicKey)
 
 // JwtProtected wrap http handler functions for jwt verification
-func JwtProtected() fiber.Handler {
+func JwtProtected(publicKey string) fiber.Handler {
+	//fmt.Println(publicKey)
+	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"\n-----END PUBLIC KEY-----\n"
+	fmt.Println(pKey)
+	//
 	return func(c *fiber.Ctx) error {
 		authHeader := strings.Split(c.GetReqHeaders()["Authorization"], "Bearer ")
 		if len(authHeader) != 2 {
@@ -23,9 +27,9 @@ func JwtProtected() fiber.Handler {
 			//utils.Bug("Malformed token on request: %s", c.Request().URI())
 			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("malformed token"))
 		} else {
-			//tokenString := authHeader[1]
+			tokenString := authHeader[1]
 			// need to fix this metod
-			/*isOk, token, err := verifyJWT_RSA(tokenString, SECRETRSAPUBLICKEY)
+			isOk, token, err := verifyJWT_RSA(tokenString, []byte(pKey))
 			if err != nil || !isOk {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError(fmt.Sprintf("error during verify jwt, err: %s", err.Error())))
 			}
@@ -33,16 +37,28 @@ func JwtProtected() fiber.Handler {
 				c.Context().SetUserValue("tokenClaims", claims)
 				return c.Next()
 			} else {
-				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
-			}*/
+				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("Unhautorized, token is not valid"))
+			}
 			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
 		}
 	}
 }
 
+func insertNewlines(input string, every int) string {
+	var result string
+	for i, char := range input {
+		result += string(char)
+		if (i+1)%every == 0 {
+			result += "\n"
+		}
+	}
+	return result
+}
+
+
 // Verify a JWT token using an RSA public key
 func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
-
+	//
 	var parsedToken *jwt.Token
 
 	// parse token
@@ -58,14 +74,15 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 		// verify
 		key, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
 		if err != nil {
-			return nil, fmt.Errorf("AuthKeycloak", err.Error())
+			fmt.Println(err.Error())
+			return nil, fmt.Errorf("AuthKeycloak verify", err.Error())
 		}
 
 		return key, nil
 	})
 
 	if err != nil {
-		return false, &jwt.Token{}, fmt.Errorf("AuthKeycloak", err.Error())
+		return false, &jwt.Token{}, err
 	}
 
 	if !state.Valid {
