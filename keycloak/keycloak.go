@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"github.com/Nerzal/gocloak/v10"
+	"gopkg.in/square/go-jose.v2"
 )
 
 type gkeycloak struct {
@@ -12,6 +13,7 @@ type gkeycloak struct {
 	clientSecret 	string
 	realm        	string
 	server       	string
+	adminJWT 		*gocloak.JWT
 	gocloak.GoCloak
 	Mu sync.Mutex
 }
@@ -33,6 +35,17 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 		Mu:           	sync.Mutex{},
 	}
 	k.GoCloak.RestyClient().SetDebug(isDebug)
+	//
+	grantType := "client_credentials"
+	t, err := k.GetToken(gocloak.TokenOptions{
+		GrantType:    &grantType,
+		ClientID:     &GCloakClient.clientId,
+		ClientSecret: &GCloakClient.clientSecret,
+	})
+	if err != nil {
+		return, nil, err
+	}
+	//
 	return k, nil
 }
 
