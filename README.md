@@ -1,5 +1,6 @@
 # HWM Utils 
 [![Go build](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml)
+[![Go test workflow](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-test.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-test.yml)
 ![GitHub](https://img.shields.io/github/license/HiWay-Media/hwm-go-utils)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/HiWay-Media/hwm-go-utils)
 
