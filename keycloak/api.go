@@ -31,3 +31,13 @@ func (g * gkeycloak) Logout(refreshToken string) error {
 	}
 	return nil
 }
+
+/*
+*/
+func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
+	users, err := g.client.GetUsers(g.ctx, g.adminJWT, g.realm, gocloak.GetUsersParams{Email: &email})
+	if err != nil {
+		return nil, err
+	}
+	return users[0], nil
+}
