@@ -1,6 +1,7 @@
 package keycloak
 
 import (
+	"context"
 	"sync"
 	"github.com/Nerzal/gocloak/v10"
 )
@@ -17,10 +18,12 @@ type gkeycloak struct {
 
 type IKeycloak interface {
 	IsDebug() bool
+	GetToken( tokenOptions gocloak.TokenOptions ) (*JWT, error)
 }
 
-func NewKeycloak(realm string, server string, clientId string, clientSecret string, isDebug bool) (IKeycloak, error)  {
+func NewKeycloak(ctx context.Context, realm string, server string, clientId string, clientSecret string, isDebug bool) (IKeycloak, error)  {
 	k := &gkeycloak{
+		ctx: 			ctx,
 		debug: 			isDebug,
 		clientId:     	clientId,
 		clientSecret: 	clientSecret,
@@ -32,6 +35,8 @@ func NewKeycloak(realm string, server string, clientId string, clientSecret stri
 	k.GoCloak.RestyClient().SetDebug(isDebug)
 	return k, nil
 }
+
+// 
 
 func (g *gkeycloak) IsDebug() bool {
 	return g.debug
