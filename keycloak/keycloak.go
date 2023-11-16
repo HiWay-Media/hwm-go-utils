@@ -23,7 +23,7 @@ func NewKeycloak(realm, server, clientId, realm string, isDebug bool) (IKeycloak
 	k := gkeycloak{
 		debug: 			isDebug,
 		clientId:     	clientId,
-		clientSecret: 	clientSecret,
+		//clientSecret: 	clientSecret,
 		realm:        	realm,
 		server:       	server,
 		GoCloak:		gocloak.NewClient(server),
