@@ -17,7 +17,7 @@ import (
 // JwtProtected wrap http handler functions for jwt verification
 func JwtProtected(publicKey string) fiber.Handler {
 	//fmt.Println(publicKey)
-	pKey := "-----BEGIN PUBLIC KEY-----\n"+insertNewlines(publicKey, int(64))+"\n-----END PUBLIC KEY-----\n"
+	pKey := "-----BEGIN PUBLIC KEY-----\n" + insertNewlines(publicKey, int(64)) + "\n-----END PUBLIC KEY-----\n"
 	fmt.Println(pKey)
 	//
 	return func(c *fiber.Ctx) error {
@@ -39,7 +39,7 @@ func JwtProtected(publicKey string) fiber.Handler {
 			} else {
 				return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("Unhautorized, token is not valid"))
 			}
-			return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
+			//return c.Status(http.StatusUnauthorized).JSON(models.ApiDefaultError("unhautorized"))
 		}
 	}
 }
@@ -54,7 +54,6 @@ func insertNewlines(input string, every int) string {
 	}
 	return result
 }
-
 
 // Verify a JWT token using an RSA public key
 func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
@@ -75,7 +74,7 @@ func verifyJWT_RSA(token string, publicKey []byte) (bool, *jwt.Token, error) {
 		key, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
 		if err != nil {
 			fmt.Println(err.Error())
-			return nil, fmt.Errorf("AuthKeycloak verify", err.Error())
+			return nil, fmt.Errorf("AuthKeycloak verify %s", err.Error())
 		}
 
 		return key, nil
