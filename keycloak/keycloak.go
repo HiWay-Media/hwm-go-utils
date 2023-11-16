@@ -51,7 +51,7 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 	if err != nil {
 		return nil, err
 	}
-	o.debugPrint("token: %+v", t)
+	k.debugPrint("token: %+v", t)
 	//
 	return k, nil
 }
