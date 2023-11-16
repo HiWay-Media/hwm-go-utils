@@ -16,7 +16,7 @@ type gkeycloak struct {
 }
 
 type IKeycloak interface {
-	IsDebug()
+	IsDebug() bool
 }
 
 func NewKeycloak(realm, server, clientId, realm, clientSecret string, isDebug bool) (IKeycloak, error)  {
