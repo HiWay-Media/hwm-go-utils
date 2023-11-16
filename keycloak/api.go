@@ -55,7 +55,7 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 		fmt.Errorf("failed to getting user: %s", err.Error())
 		return false, err
 	}
-	o.debugPrint("attributes ", attributes)
+	g.debugPrint("attributes ", attributes)
 	user.RealmRoles = &realmRoles
 	user.FirstName = &firstname
 	user.LastName = &lastname
