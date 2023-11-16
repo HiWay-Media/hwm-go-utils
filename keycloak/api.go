@@ -35,7 +35,7 @@ func (g * gkeycloak) Logout(refreshToken string) error {
 /*
 */
 func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
-	users, err := g.client.GetUsers(g.ctx, g.adminJWT, g.realm, gocloak.GetUsersParams{Email: &email})
+	users, err := g.client.GetUsers(g.ctx, g.adminJWT.AccessToken, g.realm, gocloak.GetUsersParams{Email: &email})
 	if err != nil {
 		return nil, err
 	}
