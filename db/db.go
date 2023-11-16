@@ -11,7 +11,7 @@ import (
 )
 
 func InitDB(log *zap.SugaredLogger, dbUsername string, dbPassword string, dbHost string, dbPort int, dbName string, dbIdleConn, dbMaxConn string ) *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUsername, dbPassword, dbHost, dbPort, dbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?parseTime=true", dbUsername, dbPassword, dbHost, dbPort, dbName)
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("error connection on %s, err: %s", dsn, err.Error())
