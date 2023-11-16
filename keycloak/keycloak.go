@@ -20,7 +20,7 @@ type IKeycloak interface {
 }
 
 func NewKeycloak(realm string, server string, clientId string, clientSecret string, isDebug bool) (IKeycloak, error)  {
-	k := gkeycloak{
+	k := &gkeycloak{
 		debug: 			isDebug,
 		clientId:     	clientId,
 		clientSecret: 	clientSecret,
