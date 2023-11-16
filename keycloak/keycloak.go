@@ -23,7 +23,8 @@ type gkeycloak struct {
 type IKeycloak interface {
 	//
 	IsDebug() bool
-	GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error)
+	GetToken( tokenOptions gocloak.TokenOptions ) (*gocloak.JWT, error)
+	RefreshToken( refreshToken string ) (*gocloak.JWT, error)
 	Logout(refreshToken string) error
 	//
 }
@@ -59,4 +60,10 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 
 func (g *gkeycloak) IsDebug() bool {
 	return g.debug
+}
+
+func (g *gkeycloak) debugPrint(d interface{}) {
+	if g.isDebug(){
+		log.Println(d)
+	}
 }
