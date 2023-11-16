@@ -14,7 +14,7 @@ func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, e
 
 /*
 */
-func (g *keycloak) RefreshToken( refreshToken string ) (*gocloak.JWT, error) {
+func (g *gkeycloak) RefreshToken( refreshToken string ) (*gocloak.JWT, error) {
 	tokenRefreshed, err := g.client.RefreshToken(g.ctx, refreshToken, g.clientId, g.clientSecret, g.realm) 
 	if err != nil {
 		return nil, err
