@@ -43,7 +43,7 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 		ClientSecret: &GCloakClient.clientSecret,
 	})
 	if err != nil {
-		return, nil, err
+		return nil, err
 	}
 	//
 	return k, nil
