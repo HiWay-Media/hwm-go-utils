@@ -19,11 +19,11 @@ type IKeycloak interface {
 	IsDebug()
 }
 
-func NewKeycloak(realm, server, clientId, realm string, isDebug bool) (IKeycloak, error)  {
+func NewKeycloak(realm, server, clientId, realm, clientSecret string, isDebug bool) (IKeycloak, error)  {
 	k := gkeycloak{
 		debug: 			isDebug,
 		clientId:     	clientId,
-		//clientSecret: 	clientSecret,
+		clientSecret: 	clientSecret,
 		realm:        	realm,
 		server:       	server,
 		GoCloak:		gocloak.NewClient(server),
