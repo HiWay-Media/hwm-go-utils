@@ -19,7 +19,7 @@ type IKeycloak interface {
 	IsDebug() bool
 }
 
-func NewKeycloak(realm string, server string, clientId string, realm string, clientSecret string, isDebug bool) (IKeycloak, error)  {
+func NewKeycloak(realm string, server string, clientId string, clientSecret string, isDebug bool) (IKeycloak, error)  {
 	k := gkeycloak{
 		debug: 			isDebug,
 		clientId:     	clientId,
