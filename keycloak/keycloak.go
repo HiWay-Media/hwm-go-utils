@@ -54,7 +54,7 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 	if err != nil {
 		return nil, err
 	}
-	k.debugPrint("token: %+v", t)
+	k.debugPrint("token: ", t)
 	//
 	return k, nil
 }
@@ -66,7 +66,7 @@ func (g *gkeycloak) IsDebug() bool {
 }
 
 func (g *gkeycloak) debugPrint(d ...interface{}) {
-	if g.IsDebug(){
-		log.Println(d)
+	if g.IsDebug() {
+		log.Println(d...)
 	}
 }
