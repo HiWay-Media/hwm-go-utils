@@ -24,7 +24,7 @@ func TestIKeycloak(t *testing.T) {
 	clientSecret := os.Getenv("KEYCLOAK_CLIENT_SECRET")
 	k, err := NewKeycloak(context.Background(), realm, server, clientId, clientSecret, true)
 	if err != nil {
-		t.Fatalf(err)
+		t.Fatalf(err.Error())
 	}
 	log.Println(k)
 }
