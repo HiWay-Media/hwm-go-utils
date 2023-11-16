@@ -63,7 +63,7 @@ func (g *gkeycloak) IsDebug() bool {
 }
 
 func (g *gkeycloak) debugPrint(d interface{}) {
-	if g.isDebug(){
+	if g.IsDebug(){
 		log.Println(d)
 	}
 }
