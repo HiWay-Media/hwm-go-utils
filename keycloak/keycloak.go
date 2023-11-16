@@ -45,7 +45,7 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 	}
 	k.client.RestyClient().SetDebug(isDebug)
 	//
-	grantType := "client_credentials"
+	grantType := GRANT_CLIENT_CREDENTIALS
 	t, err := k.GetToken(gocloak.TokenOptions{
 		GrantType:    &grantType,
 		ClientID:     &k.clientId,
