@@ -25,5 +25,6 @@ func TestIKeycloak(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
+	k.IsDebug()
 	//log.Println(k)
 }
