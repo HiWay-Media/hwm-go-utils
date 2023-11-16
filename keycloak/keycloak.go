@@ -19,8 +19,18 @@ type IKeycloak interface {
 	IsDebug()
 }
 
-func NewKeycloak() (IKeycloak, error)  {
-	return nil, nil
+func NewKeycloak(realm, server, clientId, realm string, isDebug bool) (IKeycloak, error)  {
+	k := gkeycloak{
+		debug: 			isDebug,
+		clientId:     	clientId,
+		clientSecret: 	clientSecret,
+		realm:        	realm,
+		server:       	server,
+		GoCloak:		gocloak.NewClient(server),
+		Mu:           	sync.Mutex{},
+	}
+	k.GoCloak.RestyClient().SetDebug(isDebug)
+	return k, nil
 }
 
 func (g *gkeycloak) IsDebug() bool {
