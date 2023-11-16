@@ -3,6 +3,14 @@ on: [push]
 #
 env:
   APP_ENV: runner
+  # Setting an environment variable with the value of a configuration variable
+  KEYCLOAK_REALM: ${{ vars.KEYCLOAK_REALM }}
+  # Setting an environment variable with the value of a configuration variable
+  KEYCLOAK_SERVER: ${{ vars.KEYCLOAK_SERVER }}
+  # Setting an environment variable with the value of a configuration variable
+  KEYCLOAK_CLIENT_ID: ${{ vars.KEYCLOAK_CLIENT_ID }}
+  # Setting an environment variable with the value of a configuration variable
+  KEYCLOAK_CLIENT_SECRET: ${{ vars.KEYCLOAK_CLIENT_SECRET }}
 #
 jobs:
   build:
