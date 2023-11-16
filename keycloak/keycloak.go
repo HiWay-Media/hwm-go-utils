@@ -26,6 +26,7 @@ type IKeycloak interface {
 	GetToken( tokenOptions gocloak.TokenOptions ) (*gocloak.JWT, error)
 	RefreshToken( refreshToken string ) (*gocloak.JWT, error)
 	Logout(refreshToken string) error
+	LoginTokenOptions() gocloak.TokenOptions
 	//
 }
 
