@@ -1,7 +1,6 @@
 package keycloak
 
 import (
-	"log"
 	"context"
 	"os"
 	"testing"
