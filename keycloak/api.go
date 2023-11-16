@@ -1,14 +1,11 @@
 package keycloak
 
-import (
-	"gopkg.in/square/go-jose.v2"
-)
+import "github.com/Nerzal/gocloak/v10"
 
 /*
-
-*/
-func (g *gkeycloak) GetToken( tokenOptions gocloak.TokenOptions ) (*JWT, error) {
-	token, err :=  g.GCloakClient.GetToken(g.ctx, g.realm, tokenOptions)
+ */
+func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error) {
+	token, err := g.client.GetToken(g.ctx, g.realm, tokenOptions)
 	if err != nil {
 		return nil, err
 	}
