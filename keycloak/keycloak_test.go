@@ -1,7 +1,6 @@
-package keycloak_test
+package keycloak
 
 import (
-	"log"
 	"context"
 	"os"
 	"testing"
@@ -22,9 +21,9 @@ func TestIKeycloak(t *testing.T) {
 	server := os.Getenv("KEYCLOAK_SERVER")
 	clientId := os.Getenv("KEYCLOAK_CLIENT_ID")
 	clientSecret := os.Getenv("KEYCLOAK_CLIENT_SECRET")
-	k, err := NewKeycloak(context.Background(), realm, server, clientId, clientSecret, true)
+	k, err := NewKeycloak(context.Background(), realm, server, clientId, clientSecret, false)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	log.Println(k)
+	//log.Println(k)
 }
