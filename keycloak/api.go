@@ -57,8 +57,8 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 	}
 	g.debugPrint("attributes ", attributes)
 	user.RealmRoles = &realmRoles
-	user.FirstName = &firstname
-	user.LastName = &lastname
+	user.FirstName = &firstName
+	user.LastName = &lastName
 	user.Email = &username
 	//
 	err = g.client.UpdateUser(g.ctx, g.adminJWT.AccessToken, g.realm, *user)
