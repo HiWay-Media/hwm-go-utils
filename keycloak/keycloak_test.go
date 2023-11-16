@@ -1,4 +1,4 @@
-package keycloak_test
+package keycloak
 
 import (
 	"log"
