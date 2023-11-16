@@ -1,6 +1,9 @@
 package keycloak
 
-import "github.com/Nerzal/gocloak/v10"
+import (
+	"fmt"
+	"github.com/Nerzal/gocloak/v10"
+)
 
 /*
  */
@@ -40,4 +43,28 @@ func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
 		return nil, err
 	}
 	return users[0], nil
+}
+
+/*
+*/
+func (g *gkeycloak) UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error) {
+	g.debugPrint("into keycloak Updateuser")
+	//getting user first
+	user, err := g.GetUserEmail( username,)
+	if err != nil {
+		fmt.Errorf("failed to getting user: %s", err.Error())
+		return false, err
+	}
+	o.debugPrint("attributes ", attributes)
+	user.RealmRoles = &realmRoles
+	user.FirstName = &firstname
+	user.LastName = &lastname
+	user.Email = &username
+	//
+	err = g.client.UpdateUser(g.ctx, g.adminJWT.AccessToken, g.realm, *user)
+	if err != nil {
+		return false, err
+	}
+	//
+	return true, nil
 }
