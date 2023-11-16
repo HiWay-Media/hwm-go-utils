@@ -11,3 +11,12 @@ func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, e
 	}
 	return token, nil
 }
+
+
+func (g * gkeycloak) Logout(refreshToken string) error {
+	err := g.client.Logout(g.ctx, g.realm, refreshToken, g.clientId, g.clientSecret)
+	if err != nil {
+		return err
+	}
+	return nil
+}

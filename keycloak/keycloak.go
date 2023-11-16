@@ -21,8 +21,11 @@ type gkeycloak struct {
 }
 
 type IKeycloak interface {
+	//
 	IsDebug() bool
 	GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error)
+	Logout(refreshToken string) error
+	//
 }
 
 func NewKeycloak(ctx context.Context, realm string, server string, clientId string, clientSecret string, isDebug bool) (IKeycloak, error) {
