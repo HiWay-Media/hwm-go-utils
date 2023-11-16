@@ -7,7 +7,7 @@ import (
 func (g *gkeycloak) LoginTokenOptions() gocloak.TokenOptions {
 	grant := GRANT_PASSWORD
 	return gocloak.TokenOptions{
-		GrantType:    grant,
+		GrantType:    &grant,
 		ClientID:     &g.clientId,
 		ClientSecret: &g.clientSecret,
 	}
