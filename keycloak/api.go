@@ -104,7 +104,7 @@ func (g *gkeycloak) LogoutUserSession( realm, session string ) error {
 func (g *gkeycloak) CreateGroup( group gocloak.Group ) (string, error) {
 	r, err := g.client.CreateGroup( g.ctx, g.adminJWT.AccessToken, g.realm, group )
 	if err != nil {
-		return err
+		return "", err
 	}
 	return r, nil
 }
