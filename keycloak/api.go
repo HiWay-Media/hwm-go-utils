@@ -77,3 +77,14 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 	//
 	return true, nil
 }
+
+/*
+*/
+func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) error {
+	g.debugPrint("into keycloak SetPassword")
+	err = g.client.SetPassword(g.ctx, g.adminJWT.AccessToken, userId, g.realm, password, temporary)
+	if err != nil {
+		return err
+	}
+	return nil
+} 
