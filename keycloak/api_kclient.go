@@ -1,7 +1,6 @@
 package keycloak
 
 import (
-	"fmt"
 	"github.com/Nerzal/gocloak/v10"
 )
 
