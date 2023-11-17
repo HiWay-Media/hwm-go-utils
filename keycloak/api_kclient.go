@@ -9,7 +9,7 @@ import (
 func (g *gkeycloak) AddClientRoleToUser( idOfClient, userID string, roles []gocloak.Role ) error {
 	err := g.client.AddClientRoleToUser(g.ctx, g.adminJWT.AccessToken, g.realm, idOfClient, userID, roles )
 	if err != nil {
-		return nil, err
+		return  err
 	}
 	return nil
 }
