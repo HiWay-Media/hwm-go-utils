@@ -22,9 +22,6 @@ jobs:
         cache: true
     #
     - name: Build HWM Go Utils
-      with:
-        go-version: ${{ matrix.go-version }}
-        cache: true
       run: go build -v ./...
     #
 #
