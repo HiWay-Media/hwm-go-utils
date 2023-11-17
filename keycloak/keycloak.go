@@ -28,6 +28,7 @@ type IKeycloak interface {
 	RefreshToken( refreshToken string ) (*gocloak.JWT, error)
 	Logout(refreshToken string) error
 	GetUserEmail( email string) (*gocloak.User, error)
+	CreateUser( user gocloak.User) (string, error)
 	UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error)
 	SetPassword(userID, realm, password string, temporary bool) error
 	LogoutUserSession( session string ) error

@@ -56,6 +56,16 @@ func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
 
 /*
 */
+func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
+	user, err := g.client.CreateUser(g.ctx, g.adminJWT.AccessToken, g.realm, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+/*
+*/
 func (g *gkeycloak) UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error) {
 	g.debugPrint("into keycloak Updateuser")
 	//getting user first
