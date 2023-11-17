@@ -91,7 +91,7 @@ func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) 
 
 /*
 */
-func (g *gkeycloak) LogoutUserSession( realm, session string ) error {
+func (g *gkeycloak) LogoutUserSession( session string ) error {
 	err := g.client.LogoutUserSession( g.ctx, g.adminJWT.AccessToken, g.realm, session )
 	if err != nil {
 		return err
