@@ -1,6 +1,12 @@
 package keycloak_test
 
+import (
+	"context"
+	"os"
+	"testing"
 
+	"github.com/HiWay-Media/hwm-go-utils/keycloak"
+)
 func TestAPI(t *testing.T) {
 	realm := os.Getenv("KEYCLOAK_REALM")
 	server := os.Getenv("KEYCLOAK_SERVER")
