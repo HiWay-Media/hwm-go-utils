@@ -1,9 +1,11 @@
-package keycloak
+package keycloak_test
 
 import (
 	"context"
 	"os"
 	"testing"
+
+	"github.com/HiWay-Media/hwm-go-utils/keycloak"
 )
 
 func TestMain(m *testing.M) {
@@ -21,7 +23,7 @@ func TestIKeycloak(t *testing.T) {
 	server := os.Getenv("KEYCLOAK_SERVER")
 	clientId := os.Getenv("KEYCLOAK_CLIENT_ID")
 	clientSecret := os.Getenv("KEYCLOAK_CLIENT_SECRET")
-	k, err := NewKeycloak(context.Background(), realm, server, clientId, clientSecret, false)
+	k, err := keycloak.NewKeycloak(context.Background(), realm, server, clientId, clientSecret, false)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
