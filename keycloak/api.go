@@ -57,11 +57,11 @@ func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
 /*
 */
 func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
-	user, err := g.client.CreateUser(g.ctx, g.adminJWT.AccessToken, g.realm, user)
+	resp, err := g.client.CreateUser(g.ctx, g.adminJWT.AccessToken, g.realm, user)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return user, nil
+	return resp, nil
 }
 
 /*
