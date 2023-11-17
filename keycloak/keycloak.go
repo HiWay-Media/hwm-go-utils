@@ -32,7 +32,8 @@ type IKeycloak interface {
 	SetPassword(userID, realm, password string, temporary bool) error
 	LogoutUserSession( session string ) error
 	CreateGroup( group gocloak.Group ) (string, error)
-	//LoginTokenOptions() gocloak.TokenOptions
+	// *** Client Roles ***
+	AddClientRoleToUser( idOfClient, userID string, roles []gocloak.Role ) error
 	//
 }
 
