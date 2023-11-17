@@ -8,7 +8,7 @@ import (
 /*
 */
 func (g *gkeycloak) Login(username string, password string) (*gocloak.JWT, error) {
-	token, err := g.client.Login(g.ctx, g.clientId, g.clientSecret, username, password )
+	token, err := g.client.Login(g.ctx, g.clientId, g.clientSecret, g.realm, username, password )
 	if err != nil {
 		return nil, err
 	}
