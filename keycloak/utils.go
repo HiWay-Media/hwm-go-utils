@@ -4,7 +4,7 @@ import (
 	"github.com/Nerzal/gocloak/v10"
 )
 
-func (g *gkeycloak) LoginTokenOptions() gocloak.TokenOptions {
+func (g *gkeycloak) loginTokenOptions() gocloak.TokenOptions {
 	grant := GRANT_PASSWORD
 	return gocloak.TokenOptions{
 		GrantType:    &grant,

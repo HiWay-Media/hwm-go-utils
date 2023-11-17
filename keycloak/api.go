@@ -6,6 +6,15 @@ import (
 )
 
 /*
+*/
+func (g *gkeycloak) Login(username string, password string) (*gocloak.JWT, error) {
+	token, err := g.client.Login(g.ctx, g.clientId, g.clientSecret, username, password )
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+/*
  */
 func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error) {
 	token, err := g.client.GetToken(g.ctx, g.realm, tokenOptions)

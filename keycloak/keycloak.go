@@ -23,12 +23,13 @@ type gkeycloak struct {
 type IKeycloak interface {
 	//
 	IsDebug() bool
+	Login(username string, password string) (*gocloak.JWT, error)
 	GetToken( tokenOptions gocloak.TokenOptions ) (*gocloak.JWT, error)
 	RefreshToken( refreshToken string ) (*gocloak.JWT, error)
 	Logout(refreshToken string) error
 	GetUserEmail( email string) (*gocloak.User, error)
 	UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error)
-	LoginTokenOptions() gocloak.TokenOptions
+	//LoginTokenOptions() gocloak.TokenOptions
 	//
 }
 
