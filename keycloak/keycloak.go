@@ -36,6 +36,10 @@ type IKeycloak interface {
 	AddClientRoleToUser( idOfClient, userID string, roles []gocloak.Role ) error
 	// *** Realm ***
 	GetRealm( realm string ) (*gocloak.RealmRepresentation, error)
+	GetRealms( ) ([]*gocloak.RealmRepresentation, error)
+	CreateRealm( realm gocloak.RealmRepresentation ) (string, error)
+	UpdateRealm( realm gocloak.RealmRepresentation ) error
+	DeleteRealm(  realm string ) error
 	//
 }
 
