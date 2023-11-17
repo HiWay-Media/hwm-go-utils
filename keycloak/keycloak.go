@@ -7,7 +7,7 @@ import (
 
 	"github.com/Nerzal/gocloak/v10"
 )
-
+/**/
 type gkeycloak struct {
 	ctx          context.Context
 	debug        bool
@@ -19,7 +19,7 @@ type gkeycloak struct {
 	client       gocloak.GoCloak
 	Mu           sync.Mutex
 }
-
+/**/
 type IKeycloak interface {
 	//
 	IsDebug() bool
@@ -29,7 +29,9 @@ type IKeycloak interface {
 	Logout(refreshToken string) error
 	GetUserEmail( email string) (*gocloak.User, error)
 	UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error)
-	SetPassword(userID, realm, password string, temporary bool) error   
+	SetPassword(userID, realm, password string, temporary bool) error
+	LogoutUserSession( session string ) error
+	CreateGroup( group gocloak.Group ) (string, error)
 	//LoginTokenOptions() gocloak.TokenOptions
 	//
 }
