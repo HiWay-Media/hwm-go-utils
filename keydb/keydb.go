@@ -6,7 +6,7 @@ import (
 
 
 func GetKeyDBClient(addr string) *redis.ClusterClient {
-	return redis.NewClusterClient(&redis.Options{
+	return redis.NewClient(&redis.Options{
         Addr:     addr,
         Password: "", // no password set
         DB:       0,  // use default DB
