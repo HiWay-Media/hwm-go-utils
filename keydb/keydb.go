@@ -5,7 +5,7 @@ import (
 )
 
 
-func GetKeyDBClient(addr string) *redis.ClusterClient {
+func GetKeyDBClient(addr string) *redis.Client {
 	return redis.NewClient(&redis.Options{
         Addr:     addr,
         Password: "", // no password set
