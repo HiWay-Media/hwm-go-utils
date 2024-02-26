@@ -6,8 +6,7 @@ require (
 	github.com/Nerzal/gocloak/v10 v10.0.1
 	github.com/Paxx-RnD/go-helper v1.0.60
 	github.com/go-resty/resty/v2 v2.7.0
-	go.uber.org/zap v1.24.0
-	gopkg.in/square/go-jose.v2 v2.6.0
+	go.uber.org/zap v1.27.0
 	gopkg.in/validator.v2 v2.0.1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.1
@@ -16,7 +15,6 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -35,7 +33,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.47.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 )
 
@@ -45,7 +42,6 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gofiber/fiber/v2 v2.46.0
 	github.com/golang-jwt/jwt/v4 v4.4.3
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 )
