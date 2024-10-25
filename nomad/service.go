@@ -1,8 +1,11 @@
 package nomad 
 
 import (
+	"encoding/json"
+    "fmt"
+    
 	"go.uber.org/zap"
-
+	"github.com/go-resty/resty/v2"
 )
 
 // the nomad api client type Interface
