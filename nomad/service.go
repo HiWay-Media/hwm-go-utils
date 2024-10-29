@@ -3,7 +3,7 @@ package nomad
 import (
 	"encoding/json"
     "fmt"
-    
+    "time"
 	"go.uber.org/zap"
 	"github.com/go-resty/resty/v2"
 )
