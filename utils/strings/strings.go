@@ -12,8 +12,6 @@ import (
     utils strings metods
 */
 
-
-
 func CleanUrlPath(url string) string {
 	// Split the protocol from the rest of the URL
 	protocolSplit := strings.SplitN(url, "://", 2)
@@ -93,4 +91,19 @@ func EncodeURL(rawUrl string) string {
 	// Output the transformed URL
 	//fmt.Println("Encoded URL:", finalUrl)
 	return finalUrl
+}
+
+// ReverseString reverses a string and returns it.
+func ReverseString(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+// CountWords returns the number of words in a given string.
+func CountWords(s string) int {
+	words := strings.Fields(s)
+	return len(words)
 }
