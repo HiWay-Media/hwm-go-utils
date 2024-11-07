@@ -1,6 +1,8 @@
 package nats_helper
 
 import (
+	"time"
+
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
@@ -16,9 +18,8 @@ func NewNatsJetStream(nc *nats.EncodedConn, logger *zap.SugaredLogger) (jetstrea
 	return js, nil
 }
 
-
 func NewNatsConn(natsUrl string, logger *zap.SugaredLogger) (*nats.EncodedConn, error) {
-    nc, err := nats.Connect(
+	nc, err := nats.Connect(
 		natsUrl,
 		nats.RetryOnFailedConnect(true),
 		//nats.MaxReconnects(100),
@@ -36,7 +37,7 @@ func NewNatsConn(natsUrl string, logger *zap.SugaredLogger) (*nats.EncodedConn, 
 			return
 		}))
 
-    if err != nil {
+	if err != nil {
 		logger.Errorf("failed to connect to nats server %s: %v", natsUrl, err)
 		return nil, err
 	}
