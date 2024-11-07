@@ -46,7 +46,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gofiber/fiber/v2 v2.46.0
 	github.com/golang-jwt/jwt/v4 v4.4.3
-	github.com/nats-io/nats.go v1.37.0
+	github.com/nats-io/nats.go v1.31.0
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
