@@ -1,6 +1,6 @@
 module github.com/HiWay-Media/hwm-go-utils
 
-go 1.18
+go 1.20
 
 require (
 	github.com/Nerzal/gocloak/v10 v10.0.1
