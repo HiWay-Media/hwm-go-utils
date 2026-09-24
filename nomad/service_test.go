@@ -1,6 +1,7 @@
 package nomad_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -62,5 +63,26 @@ func TestRequestPaths(t *testing.T) {
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("base %q:\n got  %v\n want %v", base, got, want)
 		}
+	}
+}
+
+func TestTokenAndScaleGroup(t *testing.T) {
+	var token string
+	var body nomad.ScaleRequest
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token = r.Header.Get("X-Nomad-Token")
+		_ = json.NewDecoder(r.Body).Decode(&body)
+		_, _ = w.Write([]byte("{}"))
+	}))
+	defer srv.Close()
+
+	_ = nomad.NewService(nomad.Options{BaseUrl: srv.URL}).ScaleJob("job", 2, "eu")
+	if token != "" || body.Target.Group != nomad.DefaultScaleGroup || body.Count != 2 {
+		t.Errorf("defaults: token %q, body %+v", token, body)
+	}
+
+	_ = nomad.NewService(nomad.Options{BaseUrl: srv.URL, Token: "acl-secret", ScaleGroup: "encoder"}).ScaleJob("job", 1, "eu")
+	if token != "acl-secret" || body.Target.Group != "encoder" {
+		t.Errorf("options: token %q, body %+v", token, body)
 	}
 }

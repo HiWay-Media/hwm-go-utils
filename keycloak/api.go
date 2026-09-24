@@ -110,7 +110,10 @@ func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) 
 		return err
 	}
 	g.debugPrint("into keycloak SetPassword")
-	err = g.client.SetPassword(g.ctx, token, userID, g.realm, password, temporary)
+	if realm == "" {
+		realm = g.realm
+	}
+	err = g.client.SetPassword(g.ctx, token, userID, realm, password, temporary)
 	if err != nil {
 		return err
 	}

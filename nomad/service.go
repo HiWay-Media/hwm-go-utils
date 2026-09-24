@@ -23,14 +23,23 @@ type IService interface {
 }
 
 type service struct {
-	client *resty.Client
-	logger *zap.SugaredLogger
+	client     *resty.Client
+	logger     *zap.SugaredLogger
+	scaleGroup string
 }
+
+// DefaultScaleGroup is the task group ScaleJob/RestartJob scale when
+// Options.ScaleGroup is empty.
+const DefaultScaleGroup = "restreamer"
 
 type Options struct {
 	BaseUrl  string
 	LogLevel string
 	Logger   *zap.SugaredLogger
+	// Token is sent as X-Nomad-Token when the cluster has ACLs enabled.
+	Token string
+	// ScaleGroup is the task group scaled by ScaleJob/RestartJob (default DefaultScaleGroup).
+	ScaleGroup string
 }
 
 func NewService(options Options) IService {
@@ -39,12 +48,19 @@ func NewService(options Options) IService {
 	if options.LogLevel == "debug" {
 		client.SetDebug(true)
 	}
+	if options.Token != "" {
+		client.SetHeader("X-Nomad-Token", options.Token)
+	}
 	if options.Logger == nil {
 		options.Logger = zap.NewNop().Sugar()
 	}
+	if options.ScaleGroup == "" {
+		options.ScaleGroup = DefaultScaleGroup
+	}
 	return &service{
-		client: client,
-		logger: options.Logger,
+		client:     client,
+		logger:     options.Logger,
+		scaleGroup: options.ScaleGroup,
 	}
 }
 
@@ -177,7 +193,7 @@ func (s *service) ScaleJob(jobid string, count int, region string) error {
 	request := ScaleRequest{
 		Count: count,
 		Target: ScaleGroupRequest{
-			Group: "restreamer",
+			Group: s.scaleGroup,
 		},
 	}
 
