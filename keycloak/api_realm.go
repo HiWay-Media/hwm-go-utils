@@ -6,7 +6,11 @@ import (
 
 // *** Realm ***
 func (g *gkeycloak) GetRealm( realm string ) (*gocloak.RealmRepresentation, error) {
-	realmRep, err := g.client.GetRealm(g.ctx, g.adminJWT.AccessToken, realm ) 
+	token, err := g.adminToken()
+	if err != nil {
+		return nil, err
+	}
+	realmRep, err := g.client.GetRealm(g.ctx, token, realm ) 
 	if err != nil {
 		return nil, err
 	}
@@ -15,7 +19,11 @@ func (g *gkeycloak) GetRealm( realm string ) (*gocloak.RealmRepresentation, erro
 
 //
 func (g *gkeycloak) GetRealms( ) ([]*gocloak.RealmRepresentation, error) {
-	realms, err := g.client.GetRealms(g.ctx, g.adminJWT.AccessToken ) 
+	token, err := g.adminToken()
+	if err != nil {
+		return nil, err
+	}
+	realms, err := g.client.GetRealms(g.ctx, token ) 
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +33,11 @@ func (g *gkeycloak) GetRealms( ) ([]*gocloak.RealmRepresentation, error) {
 /*
 */
 func (g *gkeycloak) CreateRealm( realm gocloak.RealmRepresentation ) (string, error) {
-	resp, err := g.client.CreateRealm(g.ctx, g.adminJWT.AccessToken, realm ) 
+	token, err := g.adminToken()
+	if err != nil {
+		return "", err
+	}
+	resp, err := g.client.CreateRealm(g.ctx, token, realm ) 
 	if err != nil {
 		return "", err
 	}
@@ -35,7 +47,11 @@ func (g *gkeycloak) CreateRealm( realm gocloak.RealmRepresentation ) (string, er
 /*
 */
 func (g *gkeycloak) UpdateRealm( realm gocloak.RealmRepresentation) error{
- 	err := g.client.UpdateRealm(g.ctx, g.adminJWT.AccessToken, realm ) 
+	token, err := g.adminToken()
+	if err != nil {
+		return err
+	}
+ 	err = g.client.UpdateRealm(g.ctx, token, realm ) 
 	if err != nil {
 		return err
 	}
@@ -45,7 +61,11 @@ func (g *gkeycloak) UpdateRealm( realm gocloak.RealmRepresentation) error{
 /*
 */
 func (g *gkeycloak) DeleteRealm(  realm string ) error {
-	err := g.client.DeleteRealm(g.ctx, g.adminJWT.AccessToken, realm ) 
+	token, err := g.adminToken()
+	if err != nil {
+		return err
+	}
+	err = g.client.DeleteRealm(g.ctx, token, realm ) 
 	if err != nil {
 		return err
 	}
