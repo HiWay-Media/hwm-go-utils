@@ -6,6 +6,8 @@
 
 hwm-utils is a collection of utility functions and packages developed by HiWay Media. These utilities aim to provide common functionalities and tools that can be used across various projects.
 
+📖 **Documentation: [hiway-media.github.io/hwm-go-utils](https://hiway-media.github.io/hwm-go-utils/)** — getting started, package guides, security model and upgrade guide.
+
 ## Packages
 
 | Package | What it provides |
