@@ -1,14 +1,14 @@
-package nomad 
+package nomad
 
 import (
 	"encoding/json"
-    "fmt"
-    "time"
+	"fmt"
+	"github.com/go-resty/resty/v2"
+	"go.uber.org/zap"
 	"net/url"
 	"strconv"
 	"strings"
-	"go.uber.org/zap"
-	"github.com/go-resty/resty/v2"
+	"time"
 )
 
 // the nomad api client type Interface
@@ -144,7 +144,6 @@ func (s *service) GetAllocations(clientID, region string) (*NomadAllocations, er
 	}
 	return &obj, nil
 }
-
 
 func (s *service) RestartJob(jobid, region string) error {
 	err := s.ScaleJob(jobid, 0, region)

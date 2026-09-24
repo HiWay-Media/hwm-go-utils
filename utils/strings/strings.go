@@ -8,7 +8,7 @@ import (
 )
 
 /*
-    utils strings metods
+   utils strings metods
 */
 
 var multipleSlashes = regexp.MustCompile(`/+`)

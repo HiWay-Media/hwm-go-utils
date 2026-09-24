@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 			panic("could not set test env")
 		}
 	}
-	
+
 	m.Run()
 }
 
