@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/Nerzal/gocloak/v10 v10.0.1
 	github.com/Paxx-RnD/go-helper v1.0.60
-	github.com/go-resty/resty/v2 v2.7.0
+	github.com/go-resty/resty/v2 v2.17.2
 	go.uber.org/zap v1.24.0
 	gopkg.in/validator.v2 v2.0.1
 	gorm.io/driver/mysql v1.5.1
