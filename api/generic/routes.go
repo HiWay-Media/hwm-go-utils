@@ -10,7 +10,7 @@ func SetEndpoints[T any](group string, router fiber.Router, database *gorm.DB, l
 	store := NewStore[T](database)
 	service := NewService[T](store, logger)
 	handler := NewHandler[T](service, logger)
-	setRoutes(group, router, handler)
+	setRoutes[T](group, router, handler)
 	return store, service, handler
 }
 
