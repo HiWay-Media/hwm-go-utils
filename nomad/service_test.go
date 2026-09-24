@@ -86,3 +86,48 @@ func TestTokenAndScaleGroup(t *testing.T) {
 		t.Errorf("options: token %q, body %+v", token, body)
 	}
 }
+
+func TestGetAllocationsDecodesNomadArray(t *testing.T) {
+	var path string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path = r.URL.Path
+		w.Header().Set("Content-Type", "application/json")
+		// shape of GET /v1/node/:id/allocations: a JSON array of allocations
+		_, _ = w.Write([]byte(`[
+			{"ID": "a1", "NodeID": "node-1", "JobID": "restreamer-1", "TaskGroup": "restreamer", "ClientStatus": "running"},
+			{"ID": "a2", "NodeID": "node-1", "JobID": "encoder-7", "TaskGroup": "encoder", "ClientStatus": "complete"}
+		]`))
+	}))
+	defer srv.Close()
+
+	allocs, err := nomad.NewService(nomad.Options{BaseUrl: srv.URL}).GetAllocations("node-1", "eu")
+	if err != nil {
+		t.Fatalf("GetAllocations: %v", err)
+	}
+	if path != "/v1/node/node-1/allocations" {
+		t.Errorf("path %q", path)
+	}
+	if len(allocs.NomadAllocations) != 2 || allocs.NomadAllocations[0].ID != "a1" || allocs.NomadAllocations[1].JobID != "encoder-7" {
+		t.Errorf("unexpected allocations: %+v", allocs.NomadAllocations)
+	}
+}
+
+func TestNomadAllocationsJSONRoundTrip(t *testing.T) {
+	in := nomad.NomadAllocations{NomadAllocations: []nomad.NomadAlloc{{ID: "a1"}}}
+	b, err := json.Marshal(in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var out nomad.NomadAllocations
+	if err := json.Unmarshal(b, &out); err != nil {
+		t.Fatalf("object form: %v", err)
+	}
+	if len(out.NomadAllocations) != 1 || out.NomadAllocations[0].ID != "a1" {
+		t.Errorf("round trip lost data: %s -> %+v", b, out)
+	}
+
+	var empty nomad.NomadAllocations
+	if err := json.Unmarshal([]byte(" [] "), &empty); err != nil || len(empty.NomadAllocations) != 0 {
+		t.Errorf("empty array: err=%v, %+v", err, empty)
+	}
+}
