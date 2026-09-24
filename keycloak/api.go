@@ -47,9 +47,16 @@ func (g * gkeycloak) Logout(refreshToken string) error {
 /*
 */
 func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
-	users, err := g.client.GetUsers(g.ctx, g.adminJWT.AccessToken, g.realm, gocloak.GetUsersParams{Email: &email})
+	token, err := g.adminToken()
 	if err != nil {
 		return nil, err
+	}
+	users, err := g.client.GetUsers(g.ctx, token, g.realm, gocloak.GetUsersParams{Email: &email})
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, fmt.Errorf("user with email %s not found", email)
 	}
 	return users[0], nil
 }
@@ -57,7 +64,11 @@ func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
 /*
 */
 func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
-	resp, err := g.client.CreateUser(g.ctx, g.adminJWT.AccessToken, g.realm, user)
+	token, err := g.adminToken()
+	if err != nil {
+		return "", err
+	}
+	resp, err := g.client.CreateUser(g.ctx, token, g.realm, user)
 	if err != nil {
 		return "", err
 	}
@@ -67,12 +78,15 @@ func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
 /*
 */
 func (g *gkeycloak) UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error) {
+	token, err := g.adminToken()
+	if err != nil {
+		return false, err
+	}
 	g.debugPrint("into keycloak Updateuser")
 	//getting user first
 	user, err := g.GetUserEmail( username,)
 	if err != nil {
-		fmt.Errorf("failed to getting user: %s", err.Error())
-		return false, err
+		return false, fmt.Errorf("failed to getting user: %w", err)
 	}
 	g.debugPrint("attributes ", attributes)
 	user.RealmRoles = &realmRoles
@@ -80,7 +94,7 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 	user.LastName = &lastName
 	user.Email = &username
 	//
-	err = g.client.UpdateUser(g.ctx, g.adminJWT.AccessToken, g.realm, *user)
+	err = g.client.UpdateUser(g.ctx, token, g.realm, *user)
 	if err != nil {
 		return false, err
 	}
@@ -91,8 +105,12 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 /*
 */
 func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) error {
+	token, err := g.adminToken()
+	if err != nil {
+		return err
+	}
 	g.debugPrint("into keycloak SetPassword")
-	err := g.client.SetPassword(g.ctx, g.adminJWT.AccessToken, userID, g.realm, password, temporary)
+	err = g.client.SetPassword(g.ctx, token, userID, g.realm, password, temporary)
 	if err != nil {
 		return err
 	}
@@ -102,7 +120,11 @@ func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) 
 /*
 */
 func (g *gkeycloak) LogoutUserSession( session string ) error {
-	err := g.client.LogoutUserSession( g.ctx, g.adminJWT.AccessToken, g.realm, session )
+	token, err := g.adminToken()
+	if err != nil {
+		return err
+	}
+	err = g.client.LogoutUserSession( g.ctx, token, g.realm, session )
 	if err != nil {
 		return err
 	}
@@ -112,7 +134,11 @@ func (g *gkeycloak) LogoutUserSession( session string ) error {
 /*
 */
 func (g *gkeycloak) CreateGroup( group gocloak.Group ) (string, error) {
-	r, err := g.client.CreateGroup( g.ctx, g.adminJWT.AccessToken, g.realm, group )
+	token, err := g.adminToken()
+	if err != nil {
+		return "", err
+	}
+	r, err := g.client.CreateGroup( g.ctx, token, g.realm, group )
 	if err != nil {
 		return "", err
 	}

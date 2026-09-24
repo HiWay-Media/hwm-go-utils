@@ -11,7 +11,7 @@ import (
 func NewNatsJetStream(nc *nats.EncodedConn, logger *zap.SugaredLogger) (jetstream.JetStream, error) {
 	js, err := jetstream.New(nc.Conn)
 	if err != nil {
-		logger.Error("failed to create nats jetstream", zap.Error(err))
+		logger.Errorf("failed to create nats jetstream: %v", err)
 		return nil, err
 	}
 
@@ -22,19 +22,21 @@ func NewNatsConn(natsUrl string, logger *zap.SugaredLogger) (*nats.EncodedConn, 
 	nc, err := nats.Connect(
 		natsUrl,
 		nats.RetryOnFailedConnect(true),
-		//nats.MaxReconnects(100),
+		// keep retrying forever: the default (60 attempts) permanently closes the
+		// connection after about a minute of server downtime
+		nats.MaxReconnects(-1),
 		nats.PingInterval(time.Second*30),
 		nats.ReconnectWait(time.Second),
 		nats.ReconnectHandler(func(conn *nats.Conn) {
-			logger.Infof("attempting to connect to nats server %s", natsUrl)
+			logger.Infof("reconnected to nats server %s", conn.ConnectedUrlRedacted())
 		}),
-		nats.DisconnectErrHandler(func(c *nats.Conn, error error) {
-			logger.Errorf("disconnected from nats %v", error)
-			return
+		nats.DisconnectErrHandler(func(c *nats.Conn, err error) {
+			if err != nil {
+				logger.Errorf("disconnected from nats: %v", err)
+			}
 		}),
 		nats.ClosedHandler(func(c *nats.Conn) {
-			logger.Errorf("connection closed")
-			return
+			logger.Errorf("nats connection closed")
 		}))
 
 	if err != nil {

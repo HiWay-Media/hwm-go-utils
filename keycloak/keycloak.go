@@ -4,9 +4,13 @@ import (
 	"context"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/Nerzal/gocloak/v10"
 )
+
+// refresh the admin token this long before it expires
+const adminTokenLeeway = 30 * time.Second
 /**/
 type gkeycloak struct {
 	ctx          context.Context
@@ -16,6 +20,7 @@ type gkeycloak struct {
 	realm        string
 	server       string
 	adminJWT     *gocloak.JWT
+	adminExpiry  time.Time
 	client       gocloak.GoCloak
 	Mu           sync.Mutex
 }
@@ -57,21 +62,35 @@ func NewKeycloak(ctx context.Context, realm string, server string, clientId stri
 	}
 	k.client.RestyClient().SetDebug(isDebug)
 	//
-	grantType := GRANT_CLIENT_CREDENTIALS
-	t, err := k.GetToken(gocloak.TokenOptions{
-		GrantType:    &grantType,
-		ClientID:     &k.clientId,
-		ClientSecret: &k.clientSecret,
-	})
-	if err != nil {
+	if _, err := k.adminToken(); err != nil {
 		return nil, err
 	}
-	k.debugPrint("token: ", t)
 	//
 	return k, nil
 }
 
-//
+// adminToken returns a valid client-credentials access token, fetching a new
+// one when none is cached or the cached one is about to expire.
+func (g *gkeycloak) adminToken() (string, error) {
+	g.Mu.Lock()
+	defer g.Mu.Unlock()
+	if g.adminJWT != nil && time.Now().Before(g.adminExpiry.Add(-adminTokenLeeway)) {
+		return g.adminJWT.AccessToken, nil
+	}
+	grantType := GRANT_CLIENT_CREDENTIALS
+	t, err := g.GetToken(gocloak.TokenOptions{
+		GrantType:    &grantType,
+		ClientID:     &g.clientId,
+		ClientSecret: &g.clientSecret,
+	})
+	if err != nil {
+		return "", err
+	}
+	g.debugPrint("admin token obtained, expires in (s): ", t.ExpiresIn)
+	g.adminJWT = t
+	g.adminExpiry = time.Now().Add(time.Duration(t.ExpiresIn) * time.Second)
+	return t.AccessToken, nil
+}
 
 func (g *gkeycloak) IsDebug() bool {
 	return g.debug

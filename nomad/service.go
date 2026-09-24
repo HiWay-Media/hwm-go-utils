@@ -4,7 +4,9 @@ import (
 	"encoding/json"
     "fmt"
     "time"
+	"net/url"
 	"strconv"
+	"strings"
 	"go.uber.org/zap"
 	"github.com/go-resty/resty/v2"
 )
@@ -33,7 +35,7 @@ type Options struct {
 
 func NewService(options Options) IService {
 	client := resty.New()
-	client.SetBaseURL(options.BaseUrl)
+	client.SetBaseURL(apiBaseURL(options.BaseUrl))
 	if options.LogLevel == "debug" {
 		client.SetDebug(true)
 	}
@@ -46,6 +48,12 @@ func NewService(options Options) IService {
 	}
 }
 
+// apiBaseURL strips a trailing "/v1" so the base URL works with or without it:
+// every request path below carries the "/v1" prefix itself.
+func apiBaseURL(baseURL string) string {
+	return strings.TrimSuffix(strings.TrimRight(baseURL, "/"), "/v1")
+}
+
 func (s *service) GetDefinition(jobid, region string) (*JobDefinition, error) {
 	params := map[string]string{
 		"region": region,
@@ -53,7 +61,7 @@ func (s *service) GetDefinition(jobid, region string) (*JobDefinition, error) {
 	resp, err := s.client.
 		R().
 		SetQueryParams(params).
-		Get("/job/" + jobid)
+		Get("/v1/job/" + url.PathEscape(jobid))
 
 	if err != nil {
 		s.logger.Errorf("Error getting job definition: %v", err)
@@ -80,7 +88,7 @@ func (s *service) AllocationStats(allocID, region string) (*ResourceUsage, error
 	resp, err := s.client.
 		R().
 		SetQueryParams(params).
-		Get("/client/allocation/" + allocID + "/stats")
+		Get("/v1/client/allocation/" + url.PathEscape(allocID) + "/stats")
 
 	if err != nil {
 		s.logger.Errorf("Error getting allocation stats: %v", err)
@@ -105,7 +113,7 @@ func (s *service) GetAllocations(clientID, region string) (*NomadAllocations, er
 	resp, err := s.client.
 		R().
 		SetQueryParams(params).
-		Get("/node/" + clientID + "/allocations") 
+		Get("/v1/node/" + url.PathEscape(clientID) + "/allocations")
 	if err != nil {
 		s.logger.Errorf("Error getting allocations: %v", err)
 		return nil, err
@@ -131,8 +139,7 @@ func (s *service) RestartJob(jobid, region string) error {
 
 	go func() {
 		time.Sleep(time.Second * 1)
-		err = s.ScaleJob(jobid, 1, region)
-		if err != nil {
+		if err := s.ScaleJob(jobid, 1, region); err != nil {
 			s.logger.Errorf("Error restarting job while starting: %v", err)
 		}
 	}()
@@ -149,7 +156,7 @@ func (s *service) DeleteJob(jobid, region string, purge bool) error {
 	resp, err := s.client.
 		R().
 		SetQueryParams(params).
-		Delete("v1/job/" + jobid)
+		Delete("/v1/job/" + url.PathEscape(jobid))
 
 	if err != nil {
 		s.logger.Errorf("Error stopping job: %v", err)
@@ -179,7 +186,7 @@ func (s *service) ScaleJob(jobid string, count int, region string) error {
 		SetQueryParams(params).
 		SetBody(request).
 		SetHeader("Content-Type", "application/json").
-		Post("v1/job/" + jobid + "scale")
+		Post("/v1/job/" + url.PathEscape(jobid) + "/scale")
 
 	if err != nil {
 		s.logger.Errorf("Error starting job: %v", err)
@@ -207,7 +214,7 @@ func (s *service) RunJob(definition JobDefinition, region string) error {
 		SetQueryParams(params).
 		SetBody(request).
 		SetHeader("content-type", "application/json").
-		Post("v1/jobs")
+		Post("/v1/jobs")
 
 	if err != nil {
 		s.logger.Errorf("Error starting job: %v", err)
