@@ -1,4 +1,4 @@
-package nomad 
+package nomad
 
 type ResourceUsage struct {
 	MemoryStats struct {

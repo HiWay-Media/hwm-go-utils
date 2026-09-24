@@ -6,14 +6,15 @@ import (
 )
 
 /*
-*/
+ */
 func (g *gkeycloak) Login(username string, password string) (*gocloak.JWT, error) {
-	token, err := g.client.Login(g.ctx, g.clientId, g.clientSecret, g.realm, username, password )
+	token, err := g.client.Login(g.ctx, g.clientId, g.clientSecret, g.realm, username, password)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
+
 /*
  */
 func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error) {
@@ -25,9 +26,9 @@ func (g *gkeycloak) GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, e
 }
 
 /*
-*/
-func (g *gkeycloak) RefreshToken( refreshToken string ) (*gocloak.JWT, error) {
-	tokenRefreshed, err := g.client.RefreshToken(g.ctx, refreshToken, g.clientId, g.clientSecret, g.realm) 
+ */
+func (g *gkeycloak) RefreshToken(refreshToken string) (*gocloak.JWT, error) {
+	tokenRefreshed, err := g.client.RefreshToken(g.ctx, refreshToken, g.clientId, g.clientSecret, g.realm)
 	if err != nil {
 		return nil, err
 	}
@@ -35,8 +36,8 @@ func (g *gkeycloak) RefreshToken( refreshToken string ) (*gocloak.JWT, error) {
 }
 
 /*
-*/
-func (g * gkeycloak) Logout(refreshToken string) error {
+ */
+func (g *gkeycloak) Logout(refreshToken string) error {
 	err := g.client.Logout(g.ctx, g.realm, refreshToken, g.clientId, g.clientSecret)
 	if err != nil {
 		return err
@@ -45,8 +46,8 @@ func (g * gkeycloak) Logout(refreshToken string) error {
 }
 
 /*
-*/
-func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
+ */
+func (g *gkeycloak) GetUserEmail(email string) (*gocloak.User, error) {
 	token, err := g.adminToken()
 	if err != nil {
 		return nil, err
@@ -62,8 +63,8 @@ func (g *gkeycloak) GetUserEmail( email string ) (*gocloak.User, error) {
 }
 
 /*
-*/
-func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
+ */
+func (g *gkeycloak) CreateUser(user gocloak.User) (string, error) {
 	token, err := g.adminToken()
 	if err != nil {
 		return "", err
@@ -76,15 +77,15 @@ func (g *gkeycloak) CreateUser( user gocloak.User) (string, error) {
 }
 
 /*
-*/
-func (g *gkeycloak) UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error) {
+ */
+func (g *gkeycloak) UpdateUser(firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error) {
 	token, err := g.adminToken()
 	if err != nil {
 		return false, err
 	}
 	g.debugPrint("into keycloak Updateuser")
 	//getting user first
-	user, err := g.GetUserEmail( username,)
+	user, err := g.GetUserEmail(username)
 	if err != nil {
 		return false, fmt.Errorf("failed to getting user: %w", err)
 	}
@@ -103,14 +104,17 @@ func (g *gkeycloak) UpdateUser( firstName string, lastName string, username stri
 }
 
 /*
-*/
+ */
 func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) error {
 	token, err := g.adminToken()
 	if err != nil {
 		return err
 	}
 	g.debugPrint("into keycloak SetPassword")
-	err = g.client.SetPassword(g.ctx, token, userID, g.realm, password, temporary)
+	if realm == "" {
+		realm = g.realm
+	}
+	err = g.client.SetPassword(g.ctx, token, userID, realm, password, temporary)
 	if err != nil {
 		return err
 	}
@@ -118,13 +122,13 @@ func (g *gkeycloak) SetPassword(userID, realm, password string, temporary bool) 
 }
 
 /*
-*/
-func (g *gkeycloak) LogoutUserSession( session string ) error {
+ */
+func (g *gkeycloak) LogoutUserSession(session string) error {
 	token, err := g.adminToken()
 	if err != nil {
 		return err
 	}
-	err = g.client.LogoutUserSession( g.ctx, token, g.realm, session )
+	err = g.client.LogoutUserSession(g.ctx, token, g.realm, session)
 	if err != nil {
 		return err
 	}
@@ -132,13 +136,13 @@ func (g *gkeycloak) LogoutUserSession( session string ) error {
 }
 
 /*
-*/
-func (g *gkeycloak) CreateGroup( group gocloak.Group ) (string, error) {
+ */
+func (g *gkeycloak) CreateGroup(group gocloak.Group) (string, error) {
 	token, err := g.adminToken()
 	if err != nil {
 		return "", err
 	}
-	r, err := g.client.CreateGroup( g.ctx, token, g.realm, group )
+	r, err := g.client.CreateGroup(g.ctx, token, g.realm, group)
 	if err != nil {
 		return "", err
 	}

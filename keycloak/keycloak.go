@@ -11,6 +11,7 @@ import (
 
 // refresh the admin token this long before it expires
 const adminTokenLeeway = 30 * time.Second
+
 /**/
 type gkeycloak struct {
 	ctx          context.Context
@@ -24,28 +25,29 @@ type gkeycloak struct {
 	client       gocloak.GoCloak
 	Mu           sync.Mutex
 }
+
 /**/
 type IKeycloak interface {
 	//
 	IsDebug() bool
 	Login(username string, password string) (*gocloak.JWT, error)
-	GetToken( tokenOptions gocloak.TokenOptions ) (*gocloak.JWT, error)
-	RefreshToken( refreshToken string ) (*gocloak.JWT, error)
+	GetToken(tokenOptions gocloak.TokenOptions) (*gocloak.JWT, error)
+	RefreshToken(refreshToken string) (*gocloak.JWT, error)
 	Logout(refreshToken string) error
-	GetUserEmail( email string) (*gocloak.User, error)
-	CreateUser( user gocloak.User) (string, error)
-	UpdateUser( firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error)
+	GetUserEmail(email string) (*gocloak.User, error)
+	CreateUser(user gocloak.User) (string, error)
+	UpdateUser(firstName string, lastName string, username string, attributes map[string][]string, realmRoles []string) (bool, error)
 	SetPassword(userID, realm, password string, temporary bool) error
-	LogoutUserSession( session string ) error
-	CreateGroup( group gocloak.Group ) (string, error)
+	LogoutUserSession(session string) error
+	CreateGroup(group gocloak.Group) (string, error)
 	// *** Client Roles ***
-	AddClientRoleToUser( idOfClient, userID string, roles []gocloak.Role ) error
+	AddClientRoleToUser(idOfClient, userID string, roles []gocloak.Role) error
 	// *** Realm ***
-	GetRealm( realm string ) (*gocloak.RealmRepresentation, error)
-	GetRealms( ) ([]*gocloak.RealmRepresentation, error)
-	CreateRealm( realm gocloak.RealmRepresentation ) (string, error)
-	UpdateRealm( realm gocloak.RealmRepresentation ) error
-	DeleteRealm(  realm string ) error
+	GetRealm(realm string) (*gocloak.RealmRepresentation, error)
+	GetRealms() ([]*gocloak.RealmRepresentation, error)
+	CreateRealm(realm gocloak.RealmRepresentation) (string, error)
+	UpdateRealm(realm gocloak.RealmRepresentation) error
+	DeleteRealm(realm string) error
 	//
 }
 

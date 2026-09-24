@@ -1,6 +1,5 @@
 package db
 
-
 import (
 	"fmt"
 	"strconv"
@@ -10,18 +9,34 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitDB(log *zap.SugaredLogger, dbUsername string, dbPassword string, dbHost string, dbPort int, dbName string, dbIdleConn, dbMaxConn string ) *gorm.DB {
+// Open connects to MySQL and applies the pool limits. dbIdleConn and dbMaxConn
+// are ignored when empty or not positive (database/sql defaults apply).
+func Open(dbUsername string, dbPassword string, dbHost string, dbPort int, dbName string, dbIdleConn, dbMaxConn string) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?parseTime=true", dbUsername, dbPassword, dbHost, dbPort, dbName)
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("error connection on %s, err: %s", dsn, err.Error())
+		// never include dsn: it contains the password
+		return nil, fmt.Errorf("connect to %s@%s:%d/%s: %w", dbUsername, dbHost, dbPort, dbName, err)
 	}
-	db, _ := conn.DB()
-	idle, _ := strconv.Atoi(dbIdleConn)
-	max, _ := strconv.Atoi(dbMaxConn)
+	sqlDB, err := conn.DB()
+	if err != nil {
+		return nil, err
+	}
+	if idle, err := strconv.Atoi(dbIdleConn); err == nil && idle > 0 {
+		sqlDB.SetMaxIdleConns(idle)
+	}
+	if max, err := strconv.Atoi(dbMaxConn); err == nil && max > 0 {
+		sqlDB.SetMaxOpenConns(max)
+	}
+	return conn, nil
+}
 
-	db.SetMaxIdleConns(idle)
-	db.SetMaxOpenConns(max)
-
+// InitDB is Open for callers that want the process to stop on failure.
+// Prefer Open in new code.
+func InitDB(log *zap.SugaredLogger, dbUsername string, dbPassword string, dbHost string, dbPort int, dbName string, dbIdleConn, dbMaxConn string) *gorm.DB {
+	conn, err := Open(dbUsername, dbPassword, dbHost, dbPort, dbName, dbIdleConn, dbMaxConn)
+	if err != nil {
+		log.Fatalf("database connection failed: %v", err)
+	}
 	return conn
 }
