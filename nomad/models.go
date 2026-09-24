@@ -1,5 +1,10 @@
 package nomad
 
+import (
+	"bytes"
+	"encoding/json"
+)
+
 type ResourceUsage struct {
 	MemoryStats struct {
 		RSS            int      `json:"RSS"`
@@ -284,8 +289,19 @@ type JobDefinition struct {
 	JobModifyIndex           int         `json:"JobModifyIndex"`
 }
 
+// NomadAllocations holds the allocations returned by GET /v1/node/:id/allocations.
 type NomadAllocations struct {
 	NomadAllocations []NomadAlloc
+}
+
+// UnmarshalJSON accepts the JSON array Nomad returns, as well as the
+// {"NomadAllocations": [...]} object form this type marshals to.
+func (a *NomadAllocations) UnmarshalJSON(data []byte) error {
+	if trimmed := bytes.TrimSpace(data); len(trimmed) > 0 && trimmed[0] == '[' {
+		return json.Unmarshal(trimmed, &a.NomadAllocations)
+	}
+	type object NomadAllocations // no methods: avoids recursing into UnmarshalJSON
+	return json.Unmarshal(data, (*object)(a))
 }
 
 // serialize me the json
