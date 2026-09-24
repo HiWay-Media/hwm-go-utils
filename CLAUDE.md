@@ -38,5 +38,6 @@ Libreria Go condivisa di HiWay Media (`github.com/HiWay-Media/hwm-go-utils`, mod
 
 ## Puntatori
 
-- Docs: `docs/` (Jekyll, workflow `jekyll-gh-pages.yml`) — aggiornare `docs/<package>.md` se cambia l'API pubblica.
+- **Docs** (`docs/`, sito https://hiway-media.github.io/hwm-go-utils/): Jekyll + tema remoto `just-the-docs/just-the-docs@v0.12.0`, schema colori custom `hwm` (`_sass/color_schemes/`), stili hero/card/`glance` in `_sass/custom/custom.scss`, tema mermaid scuro in `_includes/mermaid_config.js`. Una pagina per package (`keycloak.md`, `nomad.md`, …), sezione `api/` (index con `permalink: /api/` — lo slash finale evita il conflitto `api.html`/`api/`), più `security.md` e `changelog.md` (guida upgrade: aggiornarla a ogni cambio di comportamento). Se cambia l'API pubblica aggiornare la pagina del package e verificare che gli snippet compilino. Link interni con `{{ '/percorso' | relative_url }}` (c'è `baseurl: /hwm-go-utils`).
+- **Build/preview docs**: il workflow `jekyll-gh-pages.yml` builda sulle PR che toccano `docs/**` e fa deploy solo su `main` (action `upload-pages-artifact@v3`/`deploy-pages@v4`: le v1/v2 usavano `upload-artifact@v3`, dismesso → deploy rotto fino al 2026-09). In locale: stessa immagine di GitHub, `docker run … ghcr.io/actions/jekyll-build-pages:v1.0.13` (comando completo in `docs/contributing.md`), poi servire `_site` sotto `/hwm-go-utils/` con un server che risolva gli URL senza `.html`.
 - Repo affini: `devops_hiway` (infra, NATS/Nomad in produzione — vedi il suo `CLAUDE.md` per regole prod).

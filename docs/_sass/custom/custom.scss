@@ -1,0 +1,120 @@
+// ---------- hero ----------
+.hero {
+  position: relative;
+  margin: 0 0 2.5rem;
+  padding: 2.75rem 2rem 2.25rem;
+  border: 1px solid #252a36;
+  border-radius: 14px;
+  background:
+    radial-gradient(1200px 300px at 0% 0%, rgba(55, 198, 238, 0.16), transparent 60%),
+    radial-gradient(900px 300px at 100% 100%, rgba(139, 92, 246, 0.14), transparent 60%),
+    #121620;
+  overflow: hidden;
+
+  h1 {
+    margin-top: 0;
+    font-size: 2.6rem !important;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-tagline {
+    max-width: 44rem;
+    font-size: 1.2rem !important;
+    line-height: 1.55;
+    color: #aeb8c6;
+  }
+
+  .hero-install {
+    margin: 1.5rem 0 1.25rem;
+    max-width: 36rem;
+  }
+
+  .btn { margin: 0 0.5rem 0.5rem 0; }
+
+  .hero-badges { margin-top: 1rem; }
+  .hero-badges img { margin-right: 0.35rem; vertical-align: middle; }
+}
+
+// ---------- feature cards ----------
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 2.5rem;
+}
+
+.card {
+  display: block;
+  padding: 1.25rem 1.25rem 1rem;
+  border: 1px solid #252a36;
+  border-radius: 12px;
+  background: #131722;
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: #37c6ee;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    background: rgba(55, 198, 238, 0.12);
+    font-size: 1.2rem;
+  }
+
+  .card-title {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+    font-size: 1.05rem !important;
+    color: #f0f3f6;
+  }
+
+  .card-text {
+    margin: 0;
+    font-size: 0.92rem !important;
+    line-height: 1.5;
+    color: #9aa4b2;
+  }
+}
+
+// ---------- package pages: at-a-glance box ----------
+.glance {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0 0 2rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #252a36;
+  border-left: 3px solid #37c6ee;
+  border-radius: 8px;
+  background: #131722;
+  font-size: 0.92rem !important;
+
+  dt { color: #9aa4b2; font-weight: 600; }
+  dd { margin: 0; }
+}
+
+// numbered steps in guides
+.steps > li { margin-bottom: 0.5rem; }
+
+@media (max-width: 50rem) {
+  .hero { padding: 2rem 1.25rem 1.5rem; }
+  .hero h1 { font-size: 2rem !important; }
+  .glance { grid-template-columns: 1fr; }
+}
+
+// Go code is tab-indented: keep it compact
+pre, code { tab-size: 4; -moz-tab-size: 4; }
+
+// mermaid diagrams: centred, never wider than the column
+.language-mermaid, pre.mermaid, .mermaid { text-align: center; background: transparent !important; }
