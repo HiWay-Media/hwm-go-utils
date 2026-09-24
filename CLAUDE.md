@@ -23,17 +23,16 @@ Libreria Go condivisa di HiWay Media (`github.com/HiWay-Media/hwm-go-utils`, mod
 - **Keycloak**: il token admin (client_credentials) va preso con `g.adminToken()` — cache + refresh 30s prima della scadenza, sotto `Mu`. Mai usare `g.adminJWT` direttamente.
 - **Nomad**: tutti i path hanno prefisso `/v1/...`; `apiBaseURL()` toglie `/v1` finale dal base URL, quindi funziona con entrambe le convenzioni. ID nel path sempre con `url.PathEscape`. API `:4646` senza ACL token (non supportato dal client). `ScaleJob` ha il gruppo `"restreamer"` hardcoded.
 - **NATS**: `MaxReconnects(-1)` obbligatorio — col default (60) la connessione si chiude per sempre dopo ~1 min di server giù. `nats.EncodedConn` è deprecato (migrazione = breaking change).
-- **Fiber**: da v2.50 `c.GetReqHeaders()` restituisce `map[string][]string` → l'upgrade rompe `api/middlewares`.
-- **Middleware JWT**: le `Get*FromJwt` e `RoleCheck` fanno type assertion senza check → panic se il claim manca (Fiber non ha recover di default). Non verifica `iss`/`aud`.
-- CI GitHub Actions: `go-test.yml` gira solo su `push` e fa `go mod tidy` (muta il repo); matrice Go 1.20–1.22 (EOL). `go.mod` dichiara `go 1.20`.
+- **Fiber**: da v2.50 `c.GetReqHeaders()` restituisce `map[string][]string` — per un singolo header usare `c.Get(...)`, stabile tra versioni.
+- **Middleware JWT**: chiave RSA parsata una volta, solo RS256/384/512, `exp` obbligatorio; `iss`/`aud` opzionali via `WithIssuer`/`WithAudience` (default off: in Keycloak `aud` è spesso solo `account` senza audience mapper). Claim letti con comma-ok → mai panic su claim mancante (Fiber non ha recover di default). 401 = token assente/invalido, 403 = ruolo mancante. Claims in `GetTokenClaims(c)`. Test con chiave RSA generata e casi `alg none`/HS256: `api/middlewares/middlewares_test.go`.
+- **Versione Go**: `go.mod` dichiara `go 1.26.0` (minimo imposto da `golang.org/x/*` aggiornati; 1.26 è la più vecchia supportata a 09/2026). CI (`go-test.yml`, `go-build.yml`) su matrice 1.26.x/1.27.x; `go-test` gira su push e PR con `go mod tidy -diff`, `go vet`, `go test -race`. Con la language version nuova l'inferenza dei generici è più stretta: `setRoutes[T](...)` va istanziato esplicitamente.
 
 ## Debito noto (dall'audit 2026-09-24, non ancora risolto)
 
-- Dipendenze con CVE (`govulncheck -show verbose ./...`): fiber 2.46, fasthttp, jwt/v4 4.4.3, x/crypto, x/net, x/text — nessuna raggiungibile a livello simboli, ma da aggiornare insieme al middleware (vedi Fiber sopra).
-- `api/middlewares`: `iss`/`aud`, type assertion sicure, 403 invece di 401 per ruolo mancante, non esporre `err.Error()` al client.
+- `govulncheck -show verbose ./...`: resta solo GO-2026-5932 (`x/crypto/openpgp`, nessun fix upstream, package non importato).
 - `db.InitDB` logga la DSN con password e usa `Fatalf`; `utils/file.FileExists` va in panic su errori ≠ not-exist; `utils/strings.EncodeURL` codifica due volte; `log.GetLogger` emette codici ANSI e ignora l'encoder JSON.
 - CRUD generico: nessun limite massimo su `List`, mass assignment su `Create`, errori DB restituiti al client.
-- `dependabot.yml` punta a `/tests` (inesistente); `.gitignore` è un template Java.
+- `.gitignore` è un template Java.
 
 ## Puntatori
 
