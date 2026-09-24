@@ -59,11 +59,6 @@ nc := nomad.NewService(nomad.Options{
 
 Job, allocation and node ids are path-escaped, so ids containing spaces or slashes are safe.
 
-{: .warning }
-**Known issue:** Nomad returns a JSON *array* from `/v1/node/:id/allocations`, while
-`GetAllocations` decodes into the `NomadAllocations` struct, so the call currently fails
-with a decoding error. Until it is fixed, call the endpoint with your own HTTP client and
-decode into `[]nomad.NomadAlloc`.
 Every call passes `region` as a query parameter; use `""` for the agent's default region.
 
 ## Examples
@@ -87,6 +82,18 @@ if err := nc.ScaleJob("restreamer-match-42", 3, "eu"); err != nil {
 }
 // …
 return nc.ScaleJob("restreamer-match-42", 1, "eu")
+```
+
+### List what runs on a node
+
+```go
+allocs, err := nc.GetAllocations(nodeID, "eu")
+if err != nil {
+	return err
+}
+for _, a := range allocs.NomadAllocations {
+	fmt.Printf("%s  %s/%s\n", a.ID, a.JobID, a.TaskGroup)
+}
 ```
 
 ### Read live resource usage

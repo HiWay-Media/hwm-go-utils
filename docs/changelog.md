@@ -67,6 +67,7 @@ of your Docker images / CI (or build with `GOTOOLCHAIN=auto`).
 - SQL injection through non-numeric ids in the generic store
 - Keycloak admin methods crashing (token never stored); token now refreshed automatically
 - Nomad scale/restart calling a wrong URL; mixed `/v1` prefixes; unescaped ids
+- Nomad `GetAllocations` failing on every call (Nomad returns an array, the client expected an object)
 - NATS connection giving up after 60 reconnect attempts
 - Database password in logs; `FileExists` panic on permission errors
 - 52 of 53 dependency vulnerabilities (see [Security model](security))
