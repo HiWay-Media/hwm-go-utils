@@ -34,7 +34,7 @@ Libreria Go condivisa di HiWay Media (`github.com/HiWay-Media/hwm-go-utils`, mod
 - `nats_helper` usa `nats.EncodedConn` (deprecato): migrare a `*nats.Conn` + encoding esplicito è un breaking change → solo in una major/minor dichiarata.
 - `keycloak` salva il `ctx` di `NewKeycloak` nella struct e lo usa per tutte le chiamate; passarlo per metodo cambierebbe l'interfaccia.
 - Nomi dei package ≠ directory (`utils/file` → `file_utils`, ecc.): voluto/storico, rinominarli rompe gli import.
-- Test d'integrazione Keycloak in CI: il server del secret `KEYCLOAK_SERVER` ha il certificato TLS scaduto (2026-05-11) → `TestAPI`/`TestIKeycloak` rossi finché non viene rinnovato.
+- Test d'integrazione Keycloak (`TestAPI`/`TestIKeycloak`): girano in CI in uno step separato con `continue-on-error` (warning, non bloccano). Il server del secret `KEYCLOAK_SERVER` ha il certificato TLS scaduto dal 2026-05-11 → quello step fallisce finché il cert non viene rinnovato o il secret aggiornato.
 
 ## Puntatori
 
