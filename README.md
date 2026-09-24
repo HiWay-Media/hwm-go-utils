@@ -1,4 +1,4 @@
-# HWM Utils 
+# HWM Go Utils
 [![Go build](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-build.yml)
 [![Go test workflow](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-test.yml/badge.svg)](https://github.com/HiWay-Media/hwm-go-utils/actions/workflows/go-test.yml)
 ![GitHub](https://img.shields.io/github/license/HiWay-Media/hwm-go-utils)
@@ -6,12 +6,23 @@
 
 hwm-utils is a collection of utility functions and packages developed by HiWay Media. These utilities aim to provide common functionalities and tools that can be used across various projects.
 
-## Features
+## Packages
 
-- **String Utilities**: String manipulation functions for tasks such as string validation, formatting, and manipulation.
-- **File Utilities**: Functions for file handling, including file I/O operations, path manipulation, and directory management.
-- **Date Utilities**: Helper functions for working with dates, time zones, and date formatting.
-- **Logging Utilities**: Logging package with customizable log levels, log rotation, and log output configuration.
+| Package | What it provides |
+|---|---|
+| `api/client` | Small resty-based JSON client with bearer auth |
+| `api/generic` | Generic CRUD (Fiber + GORM): `SetEndpoints[T]` registers list/get/create/delete routes |
+| `api/middlewares` | Keycloak JWT verification (`JwtProtected`), role checks, claim getters |
+| `api/models` | Standard `OK`/`KO` response envelopes |
+| `keycloak` | gocloak wrapper: login/token, users, groups, realms, client roles |
+| `nomad` | Nomad API client: job definition, allocations, scale/restart/run/delete |
+| `nats_helper` | NATS connection with unlimited reconnects, JetStream |
+| `db` | GORM MySQL connection with pool limits |
+| `redis`, `keydb` | go-redis cluster / single-node clients |
+| `log` | zap console logger with level from a string |
+| `utils/*` | String, slice, map, int, date, conversion and file helpers |
+
+Requires Go 1.26 or later.
 
 ## Installation
 
@@ -20,6 +31,7 @@ To install the hwm-utils package, you can use the `go get` command:
 ```shell
 go get github.com/HiWay-Media/hwm-go-utils
 ```
+
 ## Contributing
 Contributions to this repository are welcome. If you would like to contribute, please follow these steps:
 
@@ -27,8 +39,9 @@ Contributions to this repository are welcome. If you would like to contribute, p
 2. Create a new branch for your feature or bug fix.
 3. Make your changes and commit them with clear and concise messages.
 4. Push your changes to your forked repository.
-O5. pen a pull request, describing your changes and the problem they solve.
-Please ensure that your code adheres to the existing code style and that any new features or changes are appropriately documented.
+5. Open a pull request, describing your changes and the problem they solve.
+
+Before opening the PR run `gofmt -l .`, `go vet ./...` and `go test -race ./...`, add tests for new behaviour and document public API changes in `docs/`.
 
 ## License
 This repository is licensed under the MIT License. Please refer to the LICENSE file for more information.

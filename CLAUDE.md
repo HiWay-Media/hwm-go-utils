@@ -7,9 +7,9 @@ Libreria Go condivisa di HiWay Media (`github.com/HiWay-Media/hwm-go-utils`, mod
 - **È una libreria**: ogni cambio di firma pubblica o di comportamento rompe i servizi che la importano. Preferire aggiunte retro-compatibili; se un breaking change è inevitabile, dichiararlo esplicitamente nella PR (sezione "Cambi di comportamento").
 - **Release = tag `vX.Y.Z` su `main` dopo il merge** (serie attuale `v0.6.x`, ultimo `v0.6.80`). Il tag lo crea/pusha l'utente, mai su branch di feature. `patch` per fix, `minor` per nuovi package/API.
 - **Branch + PR**, mai commit diretti su `main`. `git push` solo quando l'utente chiede esplicitamente di aprire la PR. MAI `Co-Authored-By` né footer di attribuzione in commit/PR.
-- **Gate prima di ogni commit**: `go build ./... && go vet ./... && go test -race ./...` verdi, `go mod tidy` senza diff. `gofmt` sui file toccati (molti file legacy non sono formattati: non riformattare file interi non correlati, gonfia il diff).
+- **Gate prima di ogni commit**: `go build ./... && go vet ./... && go test -race ./...` verdi, `go mod tidy` senza diff. `gofmt -l .` vuoto (tutto il repo è formattato dal 2026-09, la CI lo blocca; commit di sola formattazione vanno in `.git-blame-ignore-revs`).
 - **Ogni fix ha un test di regressione** che fallisce sul codice vecchio. Niente test che richiedono servizi reali senza `t.Skip` se manca l'env (vedi `keycloak/*_test.go` con `KEYCLOAK_SERVER`).
-- Libreria ≠ applicazione: niente `log.Fatal`/`os.Exit`/`fmt.Println` nel codice nuovo — restituire `error` e loggare col `*zap.SugaredLogger` passato dal chiamante.
+- Libreria ≠ applicazione: niente `log.Fatal`/`os.Exit`/`fmt.Println` nel codice nuovo — restituire `error` e loggare col `*zap.SugaredLogger` passato dal chiamante. Per non rompere i chiamanti: aggiungere un valore di ritorno `error` a una funzione che prima non restituiva nulla è compatibile (chi la chiama come statement compila ancora); cambiare `T` in `(T, error)` no → nuova funzione + wrapper (es. `db.Open` / `db.InitDB`). Nuove opzioni come campi di `Options` o functional options, non nuovi parametri o metodi su interfacce esportate (romperebbero i mock).
 - **Mai segreti nei log**: DSN con password, token, client secret (anche in debug).
 
 ## Pattern per test senza infrastruttura (validato, PR audit 2026-09)
@@ -19,21 +19,22 @@ Libreria Go condivisa di HiWay Media (`github.com/HiWay-Media/hwm-go-utils`, mod
 
 ## Trappole note / regole tecniche
 
+- **CRUD generico**: `Create` azzera PK e campi relazione del body (via `schema.Parse`), `List` è limitato da `MaxListLimit` (default 1000), gli errori DB non arrivano mai al client (log + 500 `internal error` / 404 `not found`).
 - **GORM inline conditions**: `db.First(&t, id)` / `db.Delete(&t, id)` con `id` stringa non numerica = **SQL grezzo** (SQL injection). Usare sempre `Where(clause.Eq{...})` o `Where("col = ?", v)`. `Limit(0)` genera `LIMIT 0`: per "nessun limite" usare `Limit(-1)`.
 - **Keycloak**: il token admin (client_credentials) va preso con `g.adminToken()` — cache + refresh 30s prima della scadenza, sotto `Mu`. Mai usare `g.adminJWT` direttamente.
-- **Nomad**: tutti i path hanno prefisso `/v1/...`; `apiBaseURL()` toglie `/v1` finale dal base URL, quindi funziona con entrambe le convenzioni. ID nel path sempre con `url.PathEscape`. API `:4646` senza ACL token (non supportato dal client). `ScaleJob` ha il gruppo `"restreamer"` hardcoded.
+- **Nomad**: tutti i path hanno prefisso `/v1/...`; `apiBaseURL()` toglie `/v1` finale dal base URL, quindi funziona con entrambe le convenzioni. ID nel path sempre con `url.PathEscape`. `Options.Token` → header `X-Nomad-Token` (opzionale). `ScaleJob`/`RestartJob` scalano `Options.ScaleGroup` (default `DefaultScaleGroup` = `"restreamer"`).
 - **NATS**: `MaxReconnects(-1)` obbligatorio — col default (60) la connessione si chiude per sempre dopo ~1 min di server giù. `nats.EncodedConn` è deprecato (migrazione = breaking change).
-- **Fiber**: da v2.50 `c.GetReqHeaders()` restituisce `map[string][]string` → l'upgrade rompe `api/middlewares`.
-- **Middleware JWT**: le `Get*FromJwt` e `RoleCheck` fanno type assertion senza check → panic se il claim manca (Fiber non ha recover di default). Non verifica `iss`/`aud`.
-- CI GitHub Actions: `go-test.yml` gira solo su `push` e fa `go mod tidy` (muta il repo); matrice Go 1.20–1.22 (EOL). `go.mod` dichiara `go 1.20`.
+- **Fiber**: da v2.50 `c.GetReqHeaders()` restituisce `map[string][]string` — per un singolo header usare `c.Get(...)`, stabile tra versioni.
+- **Middleware JWT**: chiave RSA parsata una volta, solo RS256/384/512, `exp` obbligatorio; `iss`/`aud` opzionali via `WithIssuer`/`WithAudience` (default off: in Keycloak `aud` è spesso solo `account` senza audience mapper). Claim letti con comma-ok → mai panic su claim mancante (Fiber non ha recover di default). 401 = token assente/invalido, 403 = ruolo mancante. Claims in `GetTokenClaims(c)`. Test con chiave RSA generata e casi `alg none`/HS256: `api/middlewares/middlewares_test.go`.
+- **Versione Go**: `go.mod` dichiara `go 1.26.0` (minimo imposto da `golang.org/x/*` aggiornati; 1.26 è la più vecchia supportata a 09/2026). CI (`go-test.yml`, `go-build.yml`) su matrice 1.26.x/1.27.x; `go-test` gira su push e PR con `go mod tidy -diff`, `go vet`, `go test -race`. Con la language version nuova l'inferenza dei generici è più stretta: `setRoutes[T](...)` va istanziato esplicitamente.
 
-## Debito noto (dall'audit 2026-09-24, non ancora risolto)
+## Debito noto (dall'audit 2026-09-24)
 
-- Dipendenze con CVE (`govulncheck -show verbose ./...`): fiber 2.46, fasthttp, jwt/v4 4.4.3, x/crypto, x/net, x/text — nessuna raggiungibile a livello simboli, ma da aggiornare insieme al middleware (vedi Fiber sopra).
-- `api/middlewares`: `iss`/`aud`, type assertion sicure, 403 invece di 401 per ruolo mancante, non esporre `err.Error()` al client.
-- `db.InitDB` logga la DSN con password e usa `Fatalf`; `utils/file.FileExists` va in panic su errori ≠ not-exist; `utils/strings.EncodeURL` codifica due volte; `log.GetLogger` emette codici ANSI e ignora l'encoder JSON.
-- CRUD generico: nessun limite massimo su `List`, mass assignment su `Create`, errori DB restituiti al client.
-- `dependabot.yml` punta a `/tests` (inesistente); `.gitignore` è un template Java.
+- `govulncheck -show verbose ./...`: resta solo GO-2026-5932 (`x/crypto/openpgp`, nessun fix upstream, package non importato).
+- `nats_helper` usa `nats.EncodedConn` (deprecato): migrare a `*nats.Conn` + encoding esplicito è un breaking change → solo in una major/minor dichiarata.
+- `keycloak` salva il `ctx` di `NewKeycloak` nella struct e lo usa per tutte le chiamate; passarlo per metodo cambierebbe l'interfaccia.
+- Nomi dei package ≠ directory (`utils/file` → `file_utils`, ecc.): voluto/storico, rinominarli rompe gli import.
+- Test d'integrazione Keycloak (`TestAPI`/`TestIKeycloak`): girano in CI in uno step separato con `continue-on-error` (warning, non bloccano). Il server del secret `KEYCLOAK_SERVER` ha il certificato TLS scaduto dal 2026-05-11 → quello step fallisce finché il cert non viene rinnovato o il secret aggiornato.
 
 ## Puntatori
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/HiWay-Media/hwm-go-utils/keycloak"
 )
+
 func TestAPI(t *testing.T) {
 	realm := os.Getenv("KEYCLOAK_REALM")
 	server := os.Getenv("KEYCLOAK_SERVER")
@@ -17,7 +18,7 @@ func TestAPI(t *testing.T) {
 	}
 	k, err := keycloak.NewKeycloak(context.Background(), realm, server, clientId, clientSecret, false)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
 	k.IsDebug()
 	//log.Println(k)

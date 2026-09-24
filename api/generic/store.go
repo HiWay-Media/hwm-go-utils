@@ -27,11 +27,18 @@ func byPrimaryKey(id any) clause.Eq {
 	return clause.Eq{Column: clause.Column{Table: clause.CurrentTable, Name: clause.PrimaryKey}, Value: id}
 }
 
+// MaxListLimit caps the page size returned by List; a missing, zero or larger
+// limit is clamped to it. Set it to 0 to disable the cap.
+var MaxListLimit = 1000
+
 func (s *Store[T]) List(start, limit int) ([]T, error) {
 	var records []T
 
-	// GORM renders Limit(0) as "LIMIT 0"; treat a non-positive limit as "no limit"
-	if limit <= 0 {
+	switch {
+	case MaxListLimit > 0 && (limit <= 0 || limit > MaxListLimit):
+		limit = MaxListLimit
+	case limit <= 0:
+		// GORM renders Limit(0) as "LIMIT 0"; -1 means no limit
 		limit = -1
 	}
 

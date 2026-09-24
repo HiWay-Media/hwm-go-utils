@@ -1,16 +1,17 @@
 package strings_utils
 
 import (
-	"regexp"
-	"strings"
 	"encoding/json"
 	"net/url"
-    "fmt"
+	"regexp"
+	"strings"
 )
 
-/* 
-    utils strings metods
+/*
+   utils strings metods
 */
+
+var multipleSlashes = regexp.MustCompile(`/+`)
 
 func CleanUrlPath(url string) string {
 	// Split the protocol from the rest of the URL
@@ -25,8 +26,7 @@ func CleanUrlPath(url string) string {
 	path := protocolSplit[1]
 
 	// Replace multiple slashes in the path part (ignores the protocol)
-	re := regexp.MustCompile(`/+`)
-	cleanedPath := re.ReplaceAllString(path, "/")
+	cleanedPath := multipleSlashes.ReplaceAllString(path, "/")
 
 	// Recombine the protocol and cleaned path
 	return protocol + "://" + cleanedPath
@@ -50,8 +50,16 @@ func ContainsWord(s, word string) bool {
 	return strings.Contains(s, word)
 }
 
+// RemoveSlice returns a copy of slice without the element at index s; the
+// input is not modified. An out-of-range index returns an unchanged copy.
 func RemoveSlice(slice []string, s int) []string {
-	return append(slice[:s], slice[s+1:]...)
+	out := make([]string, 0, len(slice))
+	for i, v := range slice {
+		if i != s {
+			out = append(out, v)
+		}
+	}
+	return out
 }
 
 // print struct json format to console
@@ -60,37 +68,16 @@ func PrettyPrint(i interface{}) string {
 	return string(s)
 }
 
-
-
+// EncodeURL re-encodes the query string of rawUrl so every parameter value is
+// escaped exactly once; scheme, userinfo, host, path and fragment are kept.
+// It returns "" when rawUrl cannot be parsed.
 func EncodeURL(rawUrl string) string {
-	//return url.QueryEscape(s)
-	// Parse the URL
 	parsedUrl, err := url.Parse(rawUrl)
 	if err != nil {
-		fmt.Println("Error parsing URL:", err)
 		return ""
 	}
-
-	// Get the base URL (without query params)
-	baseUrl := parsedUrl.Scheme + "://" + parsedUrl.Host + parsedUrl.Path
-
-	// Get the query parameters and encode them
-	queryParams := parsedUrl.Query()
-	encodedParams := url.Values{}
-
-	// Loop through and encode each query parameter
-	for key, values := range queryParams {
-		for _, value := range values {
-			encodedParams.Add(key, url.QueryEscape(value))
-		}
-	}
-
-	// Combine the base URL with the encoded query parameters
-	finalUrl := baseUrl + "?" + encodedParams.Encode()
-
-	// Output the transformed URL
-	//fmt.Println("Encoded URL:", finalUrl)
-	return finalUrl
+	parsedUrl.RawQuery = parsedUrl.Query().Encode()
+	return parsedUrl.String()
 }
 
 // ReverseString reverses a string and returns it.

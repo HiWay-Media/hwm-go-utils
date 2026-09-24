@@ -1,26 +1,27 @@
 package redis
 
-
 import (
-	"github.com/go-redis/redis/v8"
 	"os"
+
+	"github.com/go-redis/redis/v8"
 )
 
 var Brokers []string
 
+// Init reads the cluster node addresses from REDIS_1 … REDIS_6, skipping unset ones.
 func Init() {
-	Brokers = []string{
-		os.Getenv("REDIS_1"),
-		os.Getenv("REDIS_2"),
-		os.Getenv("REDIS_3"),
-		os.Getenv("REDIS_4"),
-		os.Getenv("REDIS_5"),
-		os.Getenv("REDIS_6"),
+	Brokers = nil
+	for _, env := range []string{"REDIS_1", "REDIS_2", "REDIS_3", "REDIS_4", "REDIS_5", "REDIS_6"} {
+		if addr := os.Getenv(env); addr != "" {
+			Brokers = append(Brokers, addr)
+		}
 	}
 }
 
+// GetClient returns a cluster client for Brokers; REDIS_PASSWORD is used when set.
 func GetClient() *redis.ClusterClient {
 	return redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs: Brokers,
+		Addrs:    Brokers,
+		Password: os.Getenv("REDIS_PASSWORD"),
 	})
 }

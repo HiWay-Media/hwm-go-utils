@@ -76,10 +76,29 @@ func TestStoreDeleteMissingRowIsNotFound(t *testing.T) {
 	}
 }
 
-func TestStoreListZeroLimitIsUnbounded(t *testing.T) {
-	store, lastSQL := dryRunStore(t)
-	_, _ = store.List(0, 0)
-	if got, want := lastSQL(), "SELECT * FROM `items`"; got != want {
-		t.Errorf("got %s, want %s", got, want)
+func TestStoreListLimit(t *testing.T) {
+	defer func(old int) { MaxListLimit = old }(MaxListLimit)
+
+	cases := []struct {
+		name       string
+		max, start int
+		limit      int
+		want       string
+	}{
+		{"missing limit is capped", 1000, 0, 0, "SELECT * FROM `items` LIMIT 1000"},
+		{"large limit is capped", 1000, 0, 5000, "SELECT * FROM `items` LIMIT 1000"},
+		{"limit within cap", 1000, 20, 50, "SELECT * FROM `items` LIMIT 50 OFFSET 20"},
+		{"cap disabled, missing limit is unbounded", 0, 0, 0, "SELECT * FROM `items`"},
+		{"cap disabled, explicit limit", 0, 0, 5000, "SELECT * FROM `items` LIMIT 5000"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			MaxListLimit = c.max
+			store, lastSQL := dryRunStore(t)
+			_, _ = store.List(c.start, c.limit)
+			if got := lastSQL(); got != c.want {
+				t.Errorf("got %s, want %s", got, c.want)
+			}
+		})
 	}
 }

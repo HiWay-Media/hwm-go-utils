@@ -7,35 +7,21 @@ import (
 	"strings"
 )
 
+// GetLogger returns a console logger writing to stderr at the given level
+// (debug, info, warn, error, fatal, panic; default info), with caller info.
+// Levels are plain text: ANSI colour codes break log aggregation.
 func GetLogger(logLevel string) *zap.SugaredLogger {
-	level := getLevel(logLevel)
-	cfg := zap.Config{
-		Encoding:         "json",
-		Level:            zap.NewAtomicLevelAt(level),
-		OutputPaths:      []string{"stderr"},
-		ErrorOutputPaths: []string{"stderr"},
-		EncoderConfig: zapcore.EncoderConfig{
-			MessageKey:   "message",
-			LevelKey:     "level",
-			EncodeLevel:  zapcore.CapitalColorLevelEncoder,
-			TimeKey:      "time",
-			EncodeTime:   zapcore.ISO8601TimeEncoder,
-			CallerKey:    "caller",
-			EncodeCaller: zapcore.ShortCallerEncoder,
-		},
+	encoderConfig := zapcore.EncoderConfig{
+		MessageKey:   "message",
+		LevelKey:     "level",
+		EncodeLevel:  zapcore.CapitalLevelEncoder,
+		TimeKey:      "time",
+		EncodeTime:   zapcore.ISO8601TimeEncoder,
+		CallerKey:    "caller",
+		EncodeCaller: zapcore.ShortCallerEncoder,
 	}
-	logger, _ := cfg.Build()
-
-	logger = logger.WithOptions(
-		zap.WrapCore(
-			func(zapcore.Core) zapcore.Core {
-				return zapcore.NewCore(zapcore.NewConsoleEncoder(cfg.EncoderConfig), zapcore.AddSync(os.Stderr), level)
-			}))
-
-	defer func(logger *zap.Logger) {
-		_ = logger.Sync()
-	}(logger)
-	return logger.Sugar()
+	core := zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.Lock(os.Stderr), getLevel(logLevel))
+	return zap.New(core, zap.AddCaller()).Sugar()
 }
 
 func getLevel(level string) zapcore.Level {
